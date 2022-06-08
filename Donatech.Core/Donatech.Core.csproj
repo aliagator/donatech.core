@@ -21,4 +21,16 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Controller\" />
+    <None Remove="Views\" />
+    <None Remove="Views\Home\" />
+    <None Remove="ViewModels\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="Views\" />
+    <Folder Include="Views\Home\" />
+    <Folder Include="ViewModels\" />
+  </ItemGroup>
 </Project>
