@@ -26,11 +26,17 @@
     <None Remove="Views\" />
     <None Remove="Views\Home\" />
     <None Remove="ViewModels\" />
+    <None Remove="Views\Account\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Views\" />
     <Folder Include="Views\Home\" />
     <Folder Include="ViewModels\" />
+    <Folder Include="Views\Account\" />
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\images\" />
   </ItemGroup>
 </Project>
