@@ -1,0 +1,67 @@
+﻿@model Donatech.Core.ViewModels.CreateAccount
+@{
+    Layout = "_LayoutAccount";
+}
+
+<form asp-action="CreateAccount" method="post">
+    <div class="container">
+
+        <div class="col" style="text-align:center">
+            <div asp-validation-summary="All" class="text-danger">
+                @Html.ValidationSummary()
+            </div>
+        </div>
+
+        <fieldset>
+            <legend>Datos Usuario</legend>
+            <div class="form-group col-md-6">                
+                @Html.LabelFor(a => a.Email)           
+                @Html.TextBoxFor(a => a.Email, new { @class = "form-control", placeholder = "Ej: juan.perez@gmail.com" })                
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(a => a.Password)
+                @Html.PasswordFor(a => a.Password, new { @class = "form-control", placeholder = "Ej: 1234567890" })                
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(a => a.RePassword)
+                @Html.PasswordFor(a => a.RePassword, new { @class = "form-control", placeholder = "Ej: 1234567890" })                
+            </div>
+        </fieldset>
+
+        <div class="form-group col-md-6">            
+            @Html.LabelFor(a => a.Run)
+            @Html.TextBoxFor(a => a.Run, new { @class = "form-control", placeholder = "Ej: 12345678-9" })            
+            <small id="runHelp" class="form-text text-muted">Ingrese el password sin puntos y con guion (ej: 12345678-9).</small>
+        </div>
+        <div class="form-group col-md-6">            
+            @Html.LabelFor(a => a.Nombre)
+            @Html.TextBoxFor(a => a.Nombre, new { @class = "form-control", placeholder = "Ej: Juan" })
+        </div>
+        <div class="form-group col-md-6">
+            @Html.LabelFor(a => a.Apellidos)
+            @Html.TextBoxFor(a => a.Apellidos, new { @class = "form-control", placeholder = "Ej: Perez" })            
+        </div>
+        <div class="form-group col-md-6">
+            @Html.LabelFor(a => a.Direccion)
+            @Html.TextBoxFor(a => a.Direccion, new { @class = "form-control", placeholder = "Ej: Av. Brasil #1210" })            
+        </div>
+        <div class="form-group col-md-6">
+            @Html.LabelFor(a => a.Comuna)
+            <select asp-for="Comuna" name="Comuna" class="form-control">
+                @{
+                    foreach (var comuna in ViewBag.Comunas)
+                    {
+                        <option value="@comuna.Id">@comuna.Nombre</option>
+                    }                    
+                }                
+            </select>            
+        </div>
+        <div class="form-group col-md-6">
+            @Html.LabelFor(a => a.Telefono)
+            @Html.TextBoxFor(a => a.Telefono, new { @class = "form-control", placeholder = "Ej: 56912345678" })            
+        </div>        
+        <div class="form-group col-md-6">
+            <button type="submit" class="btn btn-info btn-block my-4">Registrarme</button>            
+        </div>
+    </div>
+</form>

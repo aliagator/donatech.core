@@ -1,8 +1,7 @@
 ﻿@model Donatech.Core.ViewModels.LoginViewModel
 @{
-    Layout = "_Layout";
+    Layout = "_LayoutAccount";
 }
-
 
 <form asp-action="Login" method="post">
     <div class="text-center">
@@ -10,7 +9,9 @@
             <div class="donatech-login">
 
                 <div class="col" style="text-align:center">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div asp-validation-summary="All" class="text-danger">
+                        @Html.ValidationSummary()
+                    </div>
                 </div>
 
                 <img class="mb-4" src="~/images/donatech.png" alt="" width="72" height="72">
@@ -18,8 +19,10 @@
                 <p class="h4 mb-4">Donatech - Login</p>
 
                 @Html.TextBoxFor(l => l.Email, htmlAttributes: new { @class = "form-control mb-4", placeholder = "Email" })
+                @Html.ValidationMessageFor(l => l.Email)
 
                 @Html.PasswordFor(l => l.Password, htmlAttributes: new { @class = "form-control mb-4", placeholder = "Password" })
+                @Html.ValidationMessageFor(l => l.Password)
 
                 <button type="submit" id="btnLogin" class="btn btn-info btn-block my-4">Iniciar Sesi&oacute;n</button>
 

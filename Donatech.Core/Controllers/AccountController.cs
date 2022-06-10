@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Donatech.Core.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -46,6 +47,23 @@ namespace Donatech.Core.Controllers
             }
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> CreateAccount()
+        {
+            var listComunas = await _dbContext.Comunas.ToListAsync();
+            ViewBag.Comunas = listComunas;
+
+            return View();
         }
     }
 }
