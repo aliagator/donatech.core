@@ -65,6 +65,34 @@ namespace Donatech.Core.Controllers
 
             return View();
         }
+
+        public async Task<IActionResult> CreateAccount([FromForm]CreateAccountViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+
+            
+        }
+
+
+        #region validaciones
+        [AcceptVerbs("GET", "POST")]
+        public async Task<IActionResult> CheckExistingRun(string run)
+        {
+            try
+            {
+
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            return Json(true);
+        }
+        #endregion
     }
 }
 

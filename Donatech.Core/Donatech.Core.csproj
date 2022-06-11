@@ -19,6 +19,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +29,11 @@
     <None Remove="Views\Home\" />
     <None Remove="ViewModels\" />
     <None Remove="Views\Account\" />
+    <None Remove="ServiceProviders\" />
+    <None Remove="ServiceProviders\Interfaces\" />
+    <None Remove="NLog.Web.AspNetCore" />
+    <None Remove="NLog.Extensions.Logging" />
+    <None Remove="Utils\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
@@ -35,6 +42,9 @@
     <Folder Include="ViewModels\" />
     <Folder Include="Views\Account\" />
     <Folder Include="wwwroot\images\" />
+    <Folder Include="ServiceProviders\" />
+    <Folder Include="ServiceProviders\Interfaces\" />
+    <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\images\" />

@@ -1,13 +1,15 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Donatech.Core.ViewModels
 {
-	public class CreateAccount
+	public class CreateAccountViewModel
 	{
 		[Required(ErrorMessage = "Debe ingresar un Run")]
 		[MaxLength(10, ErrorMessage = "El Run no puede superar los {1} caracteres")]
 		[Display(Name = "Run")]
+		[Remote("CheckRun", "Account")]
 		public string Run { get; set; } = string.Empty;
 
 		[Required(ErrorMessage = "Debe ingresar un Nombre")]
