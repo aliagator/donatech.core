@@ -21,4 +21,10 @@ namespace Donatech.Core.Model
         public bool Enabled { get; set; }
         public bool SesionEmisor { get; set; }
     }
+
+    public class FilterMensajeDto
+    {
+        public int? UsuarioSession { get; set; }
+        public int? IdProducto { get; set; }
+    }
 }

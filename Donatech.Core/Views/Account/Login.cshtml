@@ -6,14 +6,20 @@
 <form asp-action="Login" method="post">
     <div class="text-center">
         <div class="container text-center mb-4">
-            <div class="donatech-login">
+            <div class="col" style="text-align:center">
+                <div asp-validation-summary="All" id="validation" class="alert alert-info text-justify" role="alert">
+                    @{
+                        if (Context.Request.Query["c"].Equals("401"))
+                        {
+                            <p class="session-expired">La sesi&oacute;n no ha sido iniciada o ha expirado :(</p>
+                        }
+                    }
 
-                <div class="col" style="text-align:center">
-                    <div asp-validation-summary="All" class="text-danger">
-                        @Html.ValidationSummary()
-                    </div>
+                    @Html.ValidationSummary()
                 </div>
+            </div>
 
+            <div class="donatech-login">
                 <img class="mb-4" src="~/images/donatech.png" alt="" width="72" height="72">
 
                 <p class="h4 mb-4">Donatech - Login</p>
@@ -41,3 +47,14 @@
         </div>
     </div>
 </form>
+
+<script type="text/javascript">
+    $(document).ready(() => {
+        if ($('#validation > .validation-summary-valid > ul > li').html() == "" &&
+            $('#validation > .session-expired').html() == undefined) {
+            $('#validation').hide()
+        } else {
+            $('#validation').show()
+        }
+    })
+</script>

@@ -28,7 +28,7 @@ namespace Donatech.Core.Model.DbModels
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
-            {
+            {                
                 //optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=Donatech;Trusted_Connection=True");
             }
         }

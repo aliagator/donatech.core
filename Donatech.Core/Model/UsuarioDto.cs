@@ -14,7 +14,7 @@ namespace Donatech.Core.Model
         public int Id { get; set; }
         public string Iniciales { get; set; } = string.Empty;
         public string Nombre { get; set; } = string.Empty;
-        public string Apellidos { get; set; } = string.Empty;
+        public string Apellidos { get; set; } = string.Empty;        
         public string Run { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Direccion { get; set; } = string.Empty;
@@ -24,5 +24,12 @@ namespace Donatech.Core.Model
         public int IdRol { get; set; }
         public bool Enabled { get; set; }
         public string Celular { get; set; } = string.Empty;
+        public Lazy<string> NombreCompleto
+        {
+            get
+            {
+                return new Lazy<string>($"{this.Nombre} {this.Apellidos}");
+            }
+        }
     }
 }

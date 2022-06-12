@@ -30,6 +30,14 @@ namespace Donatech.Core.Model
         public string UrlContacto { get; set; } = string.Empty;
         public int Index { get; set; }
         public string? CardDeckHeaderHtml { get; set; } = null!;
-        public string? CardDeckFooterHtml { get; set; } = null!;
+        public string? CardDeckFooterHtml { get; set; } = null!;        
+    }
+
+    [Serializable]
+    public class FilterProductoDto
+    {
+        public int? IdDemandante { get; set; }
+        public int? IdOferente { get; set; }
+        public bool? Enabled { get; set; }
     }
 }

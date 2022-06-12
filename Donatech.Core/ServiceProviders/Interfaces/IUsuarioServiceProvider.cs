@@ -17,6 +17,25 @@ namespace Donatech.Core.ServiceProviders.Interfaces
         /// <param name="email">Email a validar</param>
         /// <returns>True si es único, False en caso qua ya exista</returns>
 		Task<ResultDto<bool>> ValidateExistingEmail(string email);
-	}
+        /// <summary>
+        /// Metodo para validar el login del usuario usando los parametros
+        /// email y contraseña 
+        /// </summary>
+        /// <param name="usuario">Usuario con las credenciales a validar</param>
+        /// <returns>UsuarioDto con todos los datos del usuario o vacío en caso contrario</returns>
+        Task<ResultDto<UsuarioDto>> UserLogin(UsuarioDto usuario);
+        /// <summary>
+        /// Metodo para obtener un usuario por un filtro determinado
+        /// </summary>
+        /// <param name="usuario">Usuario con las credenciales a validar</param>
+        /// <returns>UsuarioDto con todos los datos del usuario o vacío en caso contrario</returns>
+        Task<ResultDto<UsuarioDto>> GetUsuarioByFiltro(UsuarioDto usuario);
+        /// <summary>
+        /// Metodo para obtener un usuario por un id determinado
+        /// </summary>
+        /// <param name="idUsuario">Id del usuario a obtener</param>
+        /// <returns>UsuarioDto con todos los datos del usuario o vacío en caso contrario</returns>
+        Task<ResultDto<UsuarioDto>> GetUsuarioById(long idUsuario);
+    }
 }
 

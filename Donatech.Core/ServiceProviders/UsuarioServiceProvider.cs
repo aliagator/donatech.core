@@ -20,7 +20,7 @@ namespace Donatech.Core.ServiceProviders
             try
             {
                 var exists = await _dbContext.Usuarios.FirstOrDefaultAsync(u =>
-                    u.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase));
+                    u.Email.ToLower().Equals(email.ToLower()));
 
                 return new ResultDto<bool>(exists == null);
             }
@@ -35,13 +35,116 @@ namespace Donatech.Core.ServiceProviders
             try
             {
                 var exists = await _dbContext.Usuarios.FirstOrDefaultAsync(u =>
-                    u.Run.Equals(run, StringComparison.InvariantCultureIgnoreCase));
+                    u.Run.ToLower().Equals(run.ToLower()));
 
                 return new ResultDto<bool>(exists == null);
             }
             catch (Exception ex)
             {
                 return new ResultDto<bool>(error: new ResultError("Error al intentar obtener el Run de los Usuarios", ex));
+            }
+        }
+
+        public async Task<ResultDto<UsuarioDto>> UserLogin(UsuarioDto usuario)
+        {
+            try
+            {
+                var usuarioDb = await _dbContext.Usuarios.FirstOrDefaultAsync(u =>
+                    u.Email.ToLower().Equals(usuario.Email.ToLower()) &&
+                    u.Password.Equals(usuario.Password));
+
+                if(usuarioDb == null)
+                {
+                    return new ResultDto<UsuarioDto>(null, new ResultError("Email y/o Contraseña incorrectos"));
+                }
+
+                return new ResultDto<UsuarioDto>(new UsuarioDto
+                {
+                    Id = usuarioDb.Id,
+                    Apellidos = usuarioDb.Apellidos,
+                    Celular = usuarioDb.Celular,
+                    IdComuna = usuarioDb.IdComuna,
+                    Direccion = usuarioDb.Direccion,
+                    Email = usuarioDb.Email,
+                    Enabled = usuarioDb.Enabled,
+                    IdRol = usuarioDb.IdRol,
+                    Nombre = usuarioDb.Nombre,
+                    Password = usuarioDb.Password,
+                    Run = usuarioDb.Run
+                });
+            }
+            catch(Exception ex)
+            {
+                return new ResultDto<UsuarioDto>(error: new ResultError("Error al intentar obtener el Usuario", ex));
+            }
+        }
+
+        public async Task<ResultDto<UsuarioDto>> GetUsuarioByFiltro(UsuarioDto usuario)
+        {
+            try
+            {
+                var usuarioDb = await _dbContext.Usuarios.FirstOrDefaultAsync(u =>
+                     u.Run.ToLower().Equals(usuario.Run.ToLower())
+                );
+
+                Console.WriteLine($"UserDb: {usuarioDb?.Run} {usuarioDb?.Nombre} {usuarioDb?.Apellidos}");
+
+                if (usuarioDb == null)
+                {
+                    return new ResultDto<UsuarioDto>(null, new ResultError("Usuario no encontrado en DB"));
+                }
+
+                return new ResultDto<UsuarioDto>(new UsuarioDto
+                {
+                    Id = usuarioDb.Id,
+                    Apellidos = usuarioDb.Apellidos,
+                    Celular = usuarioDb.Celular,
+                    IdComuna = usuarioDb.IdComuna,
+                    Direccion = usuarioDb.Direccion,
+                    Email = usuarioDb.Email,
+                    Enabled = usuarioDb.Enabled,
+                    IdRol = usuarioDb.IdRol,
+                    Nombre = usuarioDb.Nombre,
+                    Password = usuarioDb.Password,
+                    Run = usuarioDb.Run
+                });
+            }
+            catch (Exception ex)
+            {
+                return new ResultDto<UsuarioDto>(error: new ResultError("Error al intentar obtener el Usuario", ex));
+            }
+        }
+
+        public async Task<ResultDto<UsuarioDto>> GetUsuarioById(long idUsuario)
+        {
+            try
+            {
+                var infoDonante = await _dbContext.Usuarios.Include("Comuna")
+                    .Where(u => u.Id == idUsuario)
+                       .Select(u =>
+                       new UsuarioDto
+                       {
+                           Id = u.Id,
+                           Apellidos = u.Apellidos,
+                           Celular = u.Celular,
+                           Comuna = new ComunaDto
+                           {
+                               Id = u.IdComunaNavigation.Id,
+                               Nombre = u.IdComunaNavigation.Nombre!
+                           },
+                           Direccion = u.Direccion,
+                           Email = u.Email,
+                           IdComuna = u.IdComuna,
+                           Nombre = u.Nombre,
+                           IdRol = u.IdRol,
+                           Run = u.Run
+                       }).FirstOrDefaultAsync();
+
+                return new ResultDto<UsuarioDto>(infoDonante);
+            }
+            catch(Exception ex)
+            {
+                return new ResultDto<UsuarioDto>(error: new ResultError("Error al intentar obtener el Usuario", ex));
             }
         }
     }

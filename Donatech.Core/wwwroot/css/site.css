@@ -23,3 +23,8 @@ body {
     padding: 15px;
     margin: auto;
 }
+
+.donatech-home-image {
+    width: 50% !important;
+    margin: 0 auto !important;
+}

@@ -1,13 +1,35 @@
-﻿@model Donatech.Core.ViewModels.LoginViewModel
+﻿@model Donatech.Core.ViewModels.HomeViewModel
 @{
     Layout = "_Layout";
 }
 
+@{
+    var usuario = Donatech.Core.Utils.JwtSessionUtils.GetCurrentUserSession(Context);
+}
 
-<form asp-action="Login">
-    <div class="text-center">
-        <div class="container text-center mb-4">
-           <p>Index Page!</p>
-        </div>
+<h5>Bienvenido(a): @usuario?.Nombre</h5>
+
+<div class="card mb-3">
+    <img class="card-img-top donatech-home-image" src="~/images/donation.jpeg" alt="Donatech Goal">
+    <div class="card-body">
+        <h5 class="card-title">Donatech - Nuestra Misi&oacute;n</h5>
+
+        <p class="card-text">
+            La pandemia y la crisis econ&oacute;mica ha desnudado nuestra sociedad. Muchas personas se han visto obligados a teletrabajar o
+            estudiar de manera telem&aacute;tica, sin tener el soporte tecnol&oacute;gico o los recursos adecuados.
+        </p>
+        <p class="card-text">Por otro lado, cada a&ntilde;o se lanzan  a la basura muchos dispositivos tecnol&oacute;gicos de los cuales se les puede dar una segunda vida.</p>
+        <p class="card-text">
+            De la conjunci&oacute;n de ambas realidades, nace el proyecto colaborativo y sin fines de lucro Donatech, el cual busca dar una segunda
+            vida artefactos tecnol&oacute;gicos, disminuir la basura tecnol&oacute;gica y ayudar a los hogares con las necesidades tecnol&oacute;gicas, en donde
+            con motivo de la pandemia los recursos econ&oacute;micos son cada vez m&aacute;s escasos.
+        </p>
+
+        <p class="card-text">
+            <small class="text-muted">
+                “De nada sirve al hombre lamentarse de los tiempos en que vive. Lo &uacute;nico bueno que puede
+                hacer es intentar mejorarlos.” - Thomas Carlyle
+            </small>
+        </p>
     </div>
-</form>
+</div>
