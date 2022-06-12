@@ -208,7 +208,7 @@
             overflow-y: auto;
         }
 
-        #collapseExample{
+        .card-custom-margin{
             margin-bottom: 20px;
         }
     </style>
@@ -216,14 +216,14 @@
 
 @section Scripts {
     <script>
+        const idProducto = parseInt('@Context.Request.Query["idProducto"]')
+        const idUsuario = parseInt('@Context.Request.Query["idUsuario"]')
+
         const volverAction = () => {
             history.back()
         }
 
-        const enviarMensaje = () => {            
-            const idProducto = parseInt('@Context.Request.Query["idProducto"]')
-            const idUsuario = parseInt('@Context.Request.Query["idUsuario"]')
-
+        const enviarMensaje = async () => {            
             const message = {
                 Mensaje: $("#txtMessage").val(),
                 IdProducto: idProducto,
@@ -241,19 +241,48 @@
                 })
                 .then(response => response.json())
                 .then(() => {
-                    loadMessages()
-                    $("#txtMessage").val('')
+                   location.reload()
                 })
                 .catch(error => {
                     showAlertMessage('Danger', 'Error al ingresar el mensaje')
                 })
         }
 
-        const loadMessages = () => {
+        const loadMessages = async () => {
             fetch(`/Contacto/MensajesList?idUsuario=${idUsuario}&idProducto=${idProducto}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data)
+                    if(data == null || data.length == 0) {
+                        $('.msg_history').html('');
+                        return
+                    }
+
+                    let msgHistoryHtml = ''
+
+                    for(let item of data) {
+                        msgHistoryHtml += `<div class='${item.sesionEmisor == true ? "outgoing_msg" : "incoming_msg"}'>
+                                        <div style='${item.sesionEmisor == true ? "display:none" : ""}' class="incoming_msg_img">
+                                            <img src="/images/user-profile-03.png" alt="user">
+                                        </div>
+                                        <div class='${item.sesionEmisor == true ? "sent_msg" : "received_msg"}'>
+                                            <div class="received_withd_msg" style='${item.sesionEmisor == true ? "display:none" : ""}'>
+                                                <p>${item.mensaje}</p>
+                                                <span class="time_date">
+                                                    ${Date(item.fchEnvio).toLocaleTimeString('en-US')} |
+                                                    ${Date(item.fchEnvio).toLocaleDateString('en-US')}
+                                                </span>
+                                            </div>
+
+                                            <p style='${item.sesionEmisor == false ? "display:none" : ""}'>${item.mensaje}</p>
+                                            <span class="time_date" style='${item.sesionEmisor == false ? "display:none" : ""}'>
+                                                ${Date(item.fchEnvio).toLocaleTimeString('en-US')} |
+                                                ${Date(item.fchEnvio).toLocaleDateString('en-US')}
+                                            </span>
+                                        </div>
+                                    </div>`
+                    }
+
+                    $('.msg_history').html(msgHistoryHtml)
                 })
                 .catch(error => {
                     showAlertMessage('Danger', 'Error al intentar obtener la lista de mensajes')
@@ -268,8 +297,14 @@
             }
         }
 
-        jQuery(document).ready(() => {
+        const scrollToBottom = (id) => {
+            const element = document.getElementById(id);
+            element.scrollTop = element.scrollHeight;
+        }
+
+        $(document).ready(() => {
             initPage()
+            scrollToBottom('msg_history')
         })
     </script>
 }
@@ -311,54 +346,46 @@
         </div>
     </div>
 
-    <p>
-        <a class="btn btn-info" id="btnVerMensajes" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-            Ver Mensajes
-        </a>
-    </p>
+    <div class="card card-body card-custom-margin">
+        <div class="messaging">
+            <div class="inbox_msg">
+                <div class="mesgs">
+                    <div id="msg_history" class="msg_history">
+                        @{
+                            if (Model.MensajesList == null)
+                                return;
 
-    <div class="collapse" id="collapseExample">
-        <div class="card card-body">
-            <div class="messaging">
-                <div class="inbox_msg">
-                    <div class="mesgs">
-                        <div class="msg_history">
-                            @{
-                                if (Model.MensajesList == null)
-                                    return;
-
-                                foreach (var item in Model.MensajesList)
-                                {
-                                    <div class='@(item.SesionEmisor ? "outgoing_msg" : "incoming_msg")'>
-                                        <div style='@(item.SesionEmisor ? "display:none" : "")' class="incoming_msg_img">
-                                            <img src="~/images/user-profile-03.png" alt="user">
-                                        </div>
-                                        <div class='@(item.SesionEmisor ? "sent_msg" : "received_msg")'>
-                                            <div class="received_withd_msg" style='@(item.SesionEmisor ? "display:none" : "")'>
-                                                <p>@item.Mensaje</p>
-                                                <span class="time_date">
-                                                    @item.FchEnvio.ToString("HH:mm tt")    |
-                                                    @item.FchEnvio.ToString("MMMM dd, yyyy")
-                                                </span>
-                                            </div>
-
-                                            <p style='@(item.SesionEmisor == false ? "display:none" : "")'>@item.Mensaje</p>
-                                            <span class="time_date" style='@(item.SesionEmisor == false ? "display:none" : "")'>
+                            foreach (var item in Model.MensajesList)
+                            {
+                                <div class='@(item.SesionEmisor ? "outgoing_msg" : "incoming_msg")'>
+                                    <div style='@(item.SesionEmisor ? "display:none" : "")' class="incoming_msg_img">
+                                        <img src="~/images/user-profile-03.png" alt="user">
+                                    </div>
+                                    <div class='@(item.SesionEmisor ? "sent_msg" : "received_msg")'>
+                                        <div class="received_withd_msg" style='@(item.SesionEmisor ? "display:none" : "")'>
+                                            <p>@item.Mensaje</p>
+                                            <span class="time_date">
                                                 @item.FchEnvio.ToString("HH:mm tt")    |
                                                 @item.FchEnvio.ToString("MMMM dd, yyyy")
                                             </span>
                                         </div>
+
+                                        <p style='@(item.SesionEmisor == false ? "display:none" : "")'>@item.Mensaje</p>
+                                        <span class="time_date" style='@(item.SesionEmisor == false ? "display:none" : "")'>
+                                            @item.FchEnvio.ToString("HH:mm tt")    |
+                                            @item.FchEnvio.ToString("MMMM dd, yyyy")
+                                        </span>
                                     </div>
-                                }
+                                </div>
                             }
-                        </div>
-                        <div class="type_msg">
-                            <div class="input_msg_write">
-                                <input type="text" class="write_msg" placeholder="Escriba un mensaje" id="txtMessage" name="txtMessage" />
-                                <button class="msg_send_btn" type="button" id="btnSendMessage" onclick="enviarMensaje()">
-                                    <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
-                                </button>
-                            </div>
+                        }
+                    </div>
+                    <div class="type_msg">
+                        <div class="input_msg_write">
+                            <input type="text" class="write_msg" placeholder="Escriba un mensaje" id="txtMessage" name="txtMessage" />
+                            <button class="msg_send_btn" type="button" id="btnSendMessage" onclick="enviarMensaje()">
+                                <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </div>
                 </div>

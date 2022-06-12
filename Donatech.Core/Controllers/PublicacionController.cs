@@ -113,6 +113,45 @@ namespace Donatech.Core.Controllers
                 return View(new PublicacionListViewModel());
             }
         }
+
+        [HttpGet]
+        public IActionResult Buscar()
+        {
+            return View(new PublicacionListViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Buscar(PublicacionListViewModel model)
+        {
+            string mPrefix = "[Buscar(PublicacionListViewModel model)]";
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                var publicaciones = await _productoServiceProvider.GetProductosByText(model.TextSearch);
+
+                if(publicaciones.Result != null)
+                {
+                    model.PublicacionList = publicaciones.Result;
+                }
+            }
+            catch(Exception ex)
+            {
+                // En caso de obtener una excepción inesperada, mostramos un mensaje al usuario
+                _logger.AddCustomLog(cPrefix,
+                        mPrefix,
+                        "Ha ocurrido un error inesperado",
+                        ex);
+
+                ModelState.AddModelError("PublicacionesNotFound", "Ha ocurrido un error inesperado");
+            }
+
+            return View(model);
+        }
     }
 }
 

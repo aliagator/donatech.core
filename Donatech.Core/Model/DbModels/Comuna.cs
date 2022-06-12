@@ -14,7 +14,6 @@ namespace Donatech.Core.Model.DbModels
         public string? Nombre { get; set; }
         public int? IdProvincia { get; set; }
 
-        public virtual Provincia? IdProvinciaNavigation { get; set; }
         public virtual ICollection<Usuario> Usuarios { get; set; }
     }
 }

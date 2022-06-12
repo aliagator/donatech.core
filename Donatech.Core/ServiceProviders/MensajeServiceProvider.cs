@@ -71,7 +71,6 @@ namespace Donatech.Core.ServiceProviders
             {
                 _dbContext.Mensajes.Add(new Mensaje
                 {
-                    Id = 0,
                     FchEnvio = mensaje.FchEnvio,
                     IdEmisor = mensaje.IdEmisor,
                     IdProducto = mensaje.IdProducto,

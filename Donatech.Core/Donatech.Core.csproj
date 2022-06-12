@@ -43,7 +43,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="Views\" />
     <Folder Include="Views\Home\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Views\Account\" />
@@ -51,7 +50,6 @@
     <Folder Include="ServiceProviders\" />
     <Folder Include="ServiceProviders\Interfaces\" />
     <Folder Include="Utils\" />
-    <Folder Include="Views\Publicacion\" />
     <Folder Include="Views\Contacto\" />
   </ItemGroup>
   <ItemGroup>

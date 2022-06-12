@@ -1,0 +1,102 @@
+﻿@model Donatech.Core.ViewModels.PublicacionListViewModel
+@{
+    Layout = "_Layout";
+}
+
+@section CustomCss {
+    <style type="text/css">
+        .product-row:hover {
+            background-color: #cfd9df;
+            cursor: pointer;
+        }
+    </style>
+}
+
+
+@section Scripts {
+    <script>
+        const initPage = () => {
+            if ($('#validation > .validation-summary-valid > ul > li').html() == "") {
+                $('#validation').hide()
+            } else {
+                $('#validation').show()
+            }
+        }
+
+        $(document).ready(() => {
+            initPage()
+        })
+    </script>
+}
+
+<form asp-action="Buscar" method="post">
+    <div class="container">
+        <div class="col" style="text-align:center">
+            <div asp-validation-summary="All" id="validation" class="alert alert-info text-justify" role="alert">          
+                @Html.ValidationSummary()
+            </div>
+        </div>
+
+        <fieldset>
+            <legend>Lista Publicaciones</legend>
+    
+            <div class="form-group">
+                <div class="form-row">
+                    @Html.TextBoxFor(m => m.TextSearch, new { @class = "form-control", placeholder = "Buscar productos" })
+                    <small id="passHelp" class="form-text text-muted">Buscar productos por t&iacute;tulo, descripci&oacute;n o tipo (Ej: Computador, Televisi&oacute;n, Celular).</small> 
+                </div>
+                <div class="form-row">
+                    <button type="submit" class="btn btn-info btn-block my-4">Buscar</button>
+                </div>
+            </div>
+            <hr />
+            <div class="form-group">
+                @{
+                    if(Model.PublicacionList == null)
+                    {
+                        <span>No tienes publicaciones registradas.</span>
+
+                        return;
+                    }
+
+                    foreach(var item in Model.PublicacionList)
+                    {
+                        <div class="form-row product-row">
+                            <div class="media">
+                                <input type="hidden" id="hdnProductId" value='@item.Id' />
+                                <img src='@item.ImagenBase64' class="align-self-center mr-3 rounded" width="200" alt='@item.Titulo'>
+                                <div class="media-body">
+                                    <h5 class="mt-0">@item.Titulo</h5>
+                                    <p class="text-body">@item.Descripcion</p>
+                                    <div class="form-row">
+                                        <div class="col-md-2">
+                                            <p><small class="text-muted">Estado: @item.Estado</small></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <small class="text-info">Tipo: @item.TipoProducto.Descripcion</small>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p><small class="text-muted">Ubicado en @item.Oferente.Comuna.Nombre %></small></p>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-8">
+                                            <p>
+                                                <small class='@(item.IdDemandante == null ? "badge badge-success" : "badge badge-warning")'>
+                                                    @(item.IdDemandante == null ? "Disponible" : "No Disponible")
+                                                </small> 
+                                            </p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <small class="text-muted">Publicado el @item.FchPublicacion.ToString("dd 'de' MMMM 'del' yyyy")</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </fieldset>
+    </div>
+</form>

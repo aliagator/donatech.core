@@ -26,7 +26,6 @@ namespace Donatech.Core.Model.DbModels
         public string Celular { get; set; } = null!;
 
         public virtual Comuna IdComunaNavigation { get; set; } = null!;
-        public virtual Rol IdRolNavigation { get; set; } = null!;
         public virtual ICollection<Mensaje> MensajeIdEmisorNavigations { get; set; }
         public virtual ICollection<Mensaje> MensajeIdReceptorNavigations { get; set; }
         public virtual ICollection<Producto> ProductoIdDemandanteNavigations { get; set; }

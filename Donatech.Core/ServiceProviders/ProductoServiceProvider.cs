@@ -60,6 +60,71 @@ namespace Donatech.Core.ServiceProviders
                 return new ResultDto<List<ProductoDto>>(error: new ResultError($"Error inesperado al obtener la lista de publicaciones", ex));
             }
         }
+
+        public async Task<ResultDto<List<ProductoDto>>> GetProductosByText(string text)
+        {
+            try
+            {
+                var publicacionesList = await _dbContext.Productos.Include("IdTipoNavigation")
+                    .Include("IdOferenteNavigation").Include("IdComunaNavigation").Where(p =>
+                    ((p.Descripcion.ToLower().Contains(text) || string.IsNullOrEmpty(text)) ||
+                    (p.Titulo.ToLower().Contains(text) || string.IsNullOrEmpty(text)) ||
+                    (p.IdTipoNavigation.Descripcion.ToLower().Contains(text) || string.IsNullOrEmpty(text))) &&
+                    (p.Enabled == true) && (p.FchFinalizacion == null)
+                    ).OrderByDescending(p => p.FchPublicacion)
+                    .Select(p =>
+                    new ProductoDto
+                    {
+                        Id = p.Id,
+                        Descripcion = p.Descripcion,
+                        Estado = p.Estado,
+                        FchFinalizacion = p.FchFinalizacion,
+                        FchPublicacion = p.FchPublicacion,
+                        IdOferente = p.IdOferente,
+                        Oferente = new UsuarioDto
+                        {
+                            Apellidos = p.IdOferenteNavigation.Apellidos,
+                            Celular = p.IdOferenteNavigation.Celular,
+                            Direccion = p.IdOferenteNavigation.Direccion,
+                            Email = p.IdOferenteNavigation.Email,
+                            Id = p.IdOferenteNavigation.Id,
+                            IdComuna = p.IdOferenteNavigation.IdComuna,
+                            Comuna = new ComunaDto
+                            {
+                                Id = p.IdOferenteNavigation.IdComuna,
+                                Nombre = p.IdOferenteNavigation.IdComunaNavigation.Nombre ?? ""
+                            },
+                            IdRol = p.IdOferenteNavigation.IdRol,
+                            Nombre = p.IdOferenteNavigation.Nombre,
+                            Run = p.IdOferenteNavigation.Run
+                        },
+                        IdDemandante = p.IdDemandante,
+                        Imagen = p.Imagen,
+                        ImagenMimeType = p.ImagenMimeType,
+                        IdTipo = p.IdTipo,
+                        TipoProducto = new TipoProductoDto
+                        {
+                            Id = p.IdTipo,
+                            Descripcion = p.IdTipoNavigation.Descripcion ?? ""
+                        },
+                        Titulo = p.Titulo,
+                        Enabled = p.Enabled
+                    }).ToListAsync();
+
+                foreach (var item in publicacionesList)
+                {
+                    item.ImagenBase64 = $"{item.ImagenMimeType},{Convert.ToBase64String(item.Imagen!)}";
+                    item.Imagen = null;
+                    item.ImagenMimeType = null;
+                }
+
+                return new ResultDto<List<ProductoDto>>(result: publicacionesList);
+            }
+            catch (Exception ex)
+            {
+                return new ResultDto<List<ProductoDto>>(error: new ResultError($"Error inesperado al obtener la lista de publicaciones", ex));
+            }
+        }
     }
 }
 
