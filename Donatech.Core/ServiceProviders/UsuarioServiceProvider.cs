@@ -85,9 +85,7 @@ namespace Donatech.Core.ServiceProviders
             {
                 var usuarioDb = await _dbContext.Usuarios.FirstOrDefaultAsync(u =>
                      u.Run.ToLower().Equals(usuario.Run.ToLower())
-                );
-
-                Console.WriteLine($"UserDb: {usuarioDb?.Run} {usuarioDb?.Nombre} {usuarioDb?.Apellidos}");
+                );                
 
                 if (usuarioDb == null)
                 {
@@ -115,11 +113,11 @@ namespace Donatech.Core.ServiceProviders
             }
         }
 
-        public async Task<ResultDto<UsuarioDto>> GetUsuarioById(long idUsuario)
+        public async Task<ResultDto<UsuarioDto>> GetUsuarioById(int idUsuario)
         {
             try
             {
-                var infoDonante = await _dbContext.Usuarios.Include("Comuna")
+                var infoDonante = await _dbContext.Usuarios.Include("IdComunaNavigation")
                     .Where(u => u.Id == idUsuario)
                        .Select(u =>
                        new UsuarioDto
@@ -138,12 +136,12 @@ namespace Donatech.Core.ServiceProviders
                            Nombre = u.Nombre,
                            IdRol = u.IdRol,
                            Run = u.Run
-                       }).FirstOrDefaultAsync();
+                       }).FirstOrDefaultAsync();                
 
                 return new ResultDto<UsuarioDto>(infoDonante);
             }
             catch(Exception ex)
-            {
+            {                
                 return new ResultDto<UsuarioDto>(error: new ResultError("Error al intentar obtener el Usuario", ex));
             }
         }

@@ -14,7 +14,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.AllowSynchronousIO = true;
 });
-
+// Configuramos el logging, en este caso usaremos NLog
 builder.Host.ConfigureLogging(logBuilder =>
 {
     logBuilder.SetMinimumLevel(LogLevel.Information);
@@ -30,6 +30,8 @@ builder.Services.AddScoped<IUsuarioServiceProvider, UsuarioServiceProvider>();
 builder.Services.AddScoped<ITokenServiceProvider, TokenServiceProvider>();
 // Agregamos la instancia del ProductoServiceProvider
 builder.Services.AddScoped<IProductoServiceProvider, ProductoServiceProvider>();
+// Agregamos la instancia del MensajeServiceProvider
+builder.Services.AddScoped<IMensajeServiceProvider, MensajeServiceProvider>();
 // Agregamos la instancia del CommonServiceProvider
 builder.Services.AddScoped<ICommonServiceProvider, CommonServiceProvider>();
 // Agregar connection string a la clase DonatchDbContext
@@ -74,8 +76,10 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+// Configuramos el uso de HttpSession
 app.UseSession();
+// Agregamos un metodo middleware para agregar en el HTTP Header del request actual
+// el Jwt Token que exista en el HttpSession
 app.Use(async (context, next) =>
 {
     var token = context.Session.GetString("Token");
@@ -85,6 +89,7 @@ app.Use(async (context, next) =>
     }
     await next();
 });
+// Configuramos un Middleware para validar el Jwt Token de los Http Requests
 app.UseMiddleware<JwtMiddleware>();
 
 app.UseHttpsRedirection();
@@ -102,6 +107,7 @@ app.MapControllerRoute(
     defaults: new { controller = "Account", action = "Login" });
 
 app.MapDefaultControllerRoute();
+// Forzamos al builder a redirigir las peticiones al /Account/Login
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapDefaultControllerRoute();

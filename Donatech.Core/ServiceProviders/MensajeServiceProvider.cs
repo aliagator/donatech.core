@@ -19,7 +19,9 @@ namespace Donatech.Core.ServiceProviders
         {
             try
             {
-                var mensajes = await _dbContext.Mensajes.Include("Usuario")
+                var mensajes = await _dbContext.Mensajes
+                        .Include("IdEmisorNavigation")
+                        .Include("IdReceptorNavigation")
                         .Where(m => m.IdProducto == filter.IdProducto)
                         .Select(m =>
                         new MensajeDto
@@ -52,10 +54,13 @@ namespace Donatech.Core.ServiceProviders
                     mensaje.DatosReceptor!.Iniciales = $"{mensaje.DatosReceptor.Nombre[0]}{mensaje.DatosReceptor.Apellidos[0]}".ToUpper();
                 }
 
+                Console.WriteLine($"Cantidad Mensajes: {mensajes?.Count ?? 0}");
+
                 return new ResultDto<List<MensajeDto>>(mensajes);
             }
 			catch(Exception ex)
             {
+                Console.WriteLine(ex);
                 return new ResultDto<List<MensajeDto>>(error: new ResultError($"Error inesperado al obtener la lista de mensajes", ex));
             }
         }
@@ -66,6 +71,7 @@ namespace Donatech.Core.ServiceProviders
             {
                 _dbContext.Mensajes.Add(new Mensaje
                 {
+                    Id = 0,
                     FchEnvio = mensaje.FchEnvio,
                     IdEmisor = mensaje.IdEmisor,
                     IdProducto = mensaje.IdProducto,

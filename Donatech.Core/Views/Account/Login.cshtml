@@ -3,6 +3,20 @@
     Layout = "_LayoutAccount";
 }
 
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(() => {
+            if ($('#validation > .validation-summary-valid > ul > li').html() == "" &&
+                $('#validation > .session-expired').html() == undefined) {
+                $('#validation').hide()
+            } else {
+                $('#validation').show()
+            }
+        })
+    </script>
+}
+
 <form asp-action="Login" method="post">
     <div class="text-center">
         <div class="container text-center mb-4">
@@ -47,14 +61,3 @@
         </div>
     </div>
 </form>
-
-<script type="text/javascript">
-    $(document).ready(() => {
-        if ($('#validation > .validation-summary-valid > ul > li').html() == "" &&
-            $('#validation > .session-expired').html() == undefined) {
-            $('#validation').hide()
-        } else {
-            $('#validation').show()
-        }
-    })
-</script>

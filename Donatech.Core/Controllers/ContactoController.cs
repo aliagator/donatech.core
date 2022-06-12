@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Donatech.Core.Model;
 using Donatech.Core.ServiceProviders.Interfaces;
 using Donatech.Core.Utils;
+using Donatech.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -16,20 +17,62 @@ namespace Donatech.Core.Controllers
     {
         private readonly string cPrefix = "ContactoController";
         private readonly ILogger _logger;
+        private readonly IUsuarioServiceProvider _usuarioServiceProvider;
         private readonly IMensajeServiceProvider _mensajeServiceProvider;
 
         public ContactoController(ILogger<ContactoController> logger,
+            IUsuarioServiceProvider usuarioServiceProvider,
             IMensajeServiceProvider mensajeServiceProvider)
         {
             _logger = logger;
+            _usuarioServiceProvider = usuarioServiceProvider;
             _mensajeServiceProvider = mensajeServiceProvider;
         }
 
         // GET: /<controller>/
         [HttpGet]
-        public IActionResult Mensajes(int idUsuario, int idProducto)
+        public async Task<IActionResult> Mensajes(int idUsuario, int idProducto)
         {
-            return View();
+            string mPrefix = "Mensajes(int idUsuario, int idProducto)";
+
+            try
+            {
+                var viewModel = new ContactoViewModel();
+                var contactoData = await _usuarioServiceProvider.GetUsuarioById(idUsuario);                
+
+                if (contactoData.HasError)
+                {
+                    ModelState.AddModelError("ContactNotFound", "No se han podido obtener los datos del contacto");
+                    return View(new ContactoViewModel());
+                }
+
+                viewModel.InfoContacto = contactoData.Result;
+
+                var mensajes = await _mensajeServiceProvider.GetListaMensajesByFilter(new FilterMensajeDto
+                {
+                    UsuarioSession = JwtSessionUtils.GetCurrentUserSession(HttpContext)?.Id,
+                    IdProducto = idProducto
+                });                
+
+                if (!mensajes.HasError)
+                {
+                    viewModel.MensajesList = mensajes.Result;
+                }
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                // En caso de obtener una excepción inesperada, guardamos el valor en el logger
+                _logger.AddCustomLog(cPrefix,
+                        mPrefix,
+                        "Ha ocurrido un error inesperado",
+                        ex);
+
+                ModelState.AddModelError("NotHandledException", "Ha ocurrido un error inesperado");
+                return View(new ContactoViewModel());
+            }
+
         }
 
         [HttpGet]
@@ -45,12 +88,16 @@ namespace Donatech.Core.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<MensajeDto>> InsertMessage(MensajeDto mensaje)
+        public async Task<ActionResult<MensajeDto>> InsertMessage([FromBody]MensajeDto mensaje)
         {
             string mPrefix = "[InsertMessage(MensajeDto mensaje)]";
 
             try
             {
+                mensaje.IdEmisor = JwtSessionUtils.GetCurrentUserSession(HttpContext)!.Id;
+                mensaje.FchEnvio = DateTime.Now;                
+                Console.WriteLine($"InsertMessage: {mensaje.Mensaje}");
+
                 var result = await _mensajeServiceProvider.InsertMessage(mensaje);
 
                 if (result.Result)

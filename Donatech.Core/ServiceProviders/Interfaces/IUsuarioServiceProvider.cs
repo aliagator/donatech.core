@@ -35,7 +35,7 @@ namespace Donatech.Core.ServiceProviders.Interfaces
         /// </summary>
         /// <param name="idUsuario">Id del usuario a obtener</param>
         /// <returns>UsuarioDto con todos los datos del usuario o vacío en caso contrario</returns>
-        Task<ResultDto<UsuarioDto>> GetUsuarioById(long idUsuario);
+        Task<ResultDto<UsuarioDto>> GetUsuarioById(int idUsuario);
     }
 }
 

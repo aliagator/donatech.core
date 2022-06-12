@@ -78,9 +78,7 @@ namespace Donatech.Core.Controllers
                 {
                     Email = viewModel.Email,
                     Password = viewModel.Password
-                });
-
-                Console.WriteLine($"Usuario: {validUser.Result?.NombreCompleto}");
+                });                
 
                 // Verificamos que la respuesta no contenga errores
                 if (validUser.HasError)
@@ -99,9 +97,7 @@ namespace Donatech.Core.Controllers
                 var token = _tokenServiceProvider.BuildToken(
                     key: _configuration.GetValue<string>("Jwt:Key"),
                     issuer: _configuration.GetValue<string>("Jwt:Issuer"),
-                    usuario: validUser.Result!);
-
-                Console.WriteLine($"Token: {token}");
+                    usuario: validUser.Result!);                
 
                 // Validamos que el token se haya generado correctamente
                 if (token == null)

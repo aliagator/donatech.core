@@ -17,8 +17,7 @@ namespace Donatech.Core.Utils
                 return;
 
             // authorization
-            var user = context?.HttpContext?.Session.Get<UsuarioDto>(Constants.UserSessionContextId);
-            Console.WriteLine($"Nombre Usuario: {user?.NombreCompleto}");
+            var user = context?.HttpContext?.Session.Get<UsuarioDto>(Constants.UserSessionContextId);            
 
             if (user == null)
             {

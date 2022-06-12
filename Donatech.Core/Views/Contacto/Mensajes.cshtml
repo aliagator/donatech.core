@@ -207,6 +207,10 @@
             height: 516px;
             overflow-y: auto;
         }
+
+        #collapseExample{
+            margin-bottom: 20px;
+        }
     </style>
 }
 
@@ -226,7 +230,7 @@
                 IdReceptor: idUsuario
             }
 
-            fetch('Contacto/InsertMessage',
+            fetch('/Contacto/InsertMessage',
                 {
                     method: 'POST',
                     headers: {
@@ -246,7 +250,7 @@
         }
 
         const loadMessages = () => {
-            fetch(`Contacto/MensajesList?idUsuario=${idUsuario}&idProducto=${idProducto}`)
+            fetch(`/Contacto/MensajesList?idUsuario=${idUsuario}&idProducto=${idProducto}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data)
@@ -257,20 +261,32 @@
         }
 
         const initPage = () => {
-            $(document).ready(() => {
-                $('#btnVerMensajes').click()
-            })
+            if ($('#validation > .validation-summary-valid > ul > li').html() == "") {
+                $('#validation').hide()
+            } else {
+                $('#validation').show()
+            }
         }
+
+        jQuery(document).ready(() => {
+            initPage()
+        })
     </script>
 }
 
 
-<div class="container">
+<div class="container" style="margin-bottom: 50px">
     <div id="alertInfoMessage" class="alert alert-info" role="alert" style="display:none">
         &nbsp;
     </div>
     <div id="alertErrorMessage" class="alert alert-danger" role="alert" style="display:none">
         &nbsp;
+    </div>
+
+    <div class="col" style="text-align:center">
+        <div asp-validation-summary="All" id="validation" class="alert alert-info text-justify" role="alert">          
+            @Html.ValidationSummary()
+        </div>
     </div>
 
     <br />
@@ -315,7 +331,7 @@
                                 {
                                     <div class='@(item.SesionEmisor ? "outgoing_msg" : "incoming_msg")'>
                                         <div style='@(item.SesionEmisor ? "display:none" : "")' class="incoming_msg_img">
-                                            <img src="~/img/user-profile-03.png" alt="user">
+                                            <img src="~/images/user-profile-03.png" alt="user">
                                         </div>
                                         <div class='@(item.SesionEmisor ? "sent_msg" : "received_msg")'>
                                             <div class="received_withd_msg" style='@(item.SesionEmisor ? "display:none" : "")'>
@@ -351,6 +367,6 @@
     </div>
 
     <div class="form-group">
-        <button class="btn btn-secondary btn-block my-4" name="btnCancelar" onclick="volverAction()">Volver</button>
+        @Html.ActionLink("Volver", "Index", "Home", null, new { @class = "btn btn-secondary" })        
     </div>
 </div>

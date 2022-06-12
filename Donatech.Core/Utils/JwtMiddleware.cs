@@ -34,17 +34,13 @@ namespace Donatech.Core.Utils
             {
                 // Obtenemos los identities (ClaimsIdentity) desde el jwtToken
                 var jwtToken = (JwtSecurityToken)tokenValidated.Item2!;
-                var userRun = jwtToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-
-                Console.WriteLine($"Middleware: > Token Validated: > userRun: {userRun}");
+                var userRun = jwtToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;                
 
                 // Obtenemos el usuario por el ClaimEmail
                 var userDb = await usuarioServiceProvider.GetUsuarioByFiltro(new Model.UsuarioDto
                 {
                     Run = userRun
-                });
-
-                Console.WriteLine($"Middleware: > Token Validated: > UserDb: {userDb.Result!.NombreCompleto}");
+                });                
 
                 // Si el usuario existe en DB, lo adjuntamos al HttpContext
                 if (!userDb.HasError)
