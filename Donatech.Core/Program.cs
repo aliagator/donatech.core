@@ -38,7 +38,7 @@ builder.Services.AddScoped<ICommonServiceProvider, CommonServiceProvider>();
 // Usamos ServiceLifetime.Scoped para evitar problemas de sincronización de datos con la DB y EntityFramework
 // y que crea una instancia de las dependencias por request
 builder.Services.AddDbContext<Donatech.Core.Model.DbModels.DonatechDBContext>(options =>
-{
+{    
     options.UseSqlServer(builder.Configuration.GetValue<string>("ConnectionStrings:DonatechDB"));    
 }, ServiceLifetime.Transient);
 
