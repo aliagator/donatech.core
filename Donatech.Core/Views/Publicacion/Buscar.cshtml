@@ -23,8 +23,19 @@
             }
         }
 
+        const addProductRowEvents = () => {
+            $(".product-row").click((item) => {
+                console.log(item.currentTarget)
+                let productId = $(item.currentTarget).find("#hdnProductId").first().val()
+                let detailUrl = '/Publicacion/DetallePublicacion?id=productId'
+                detailUrl = detailUrl.replace("productId", productId)
+                location.href = detailUrl
+            })
+        }
+
         $(document).ready(() => {
             initPage()
+            addProductRowEvents()
         })
     </script>
 }
@@ -52,9 +63,9 @@
             <hr />
             <div class="form-group">
                 @{
-                    if(Model.PublicacionList == null)
+                    if(Model.PublicacionList == null || Model.PublicacionList?.Count == 0)
                     {
-                        <span>No tienes publicaciones registradas.</span>
+                        <span>No existen publicaciones registradas que coincidan con el cr&iacute;terio de b&uacute;squeda.</span>
 
                         return;
                     }
@@ -76,7 +87,7 @@
                                             <small class="text-info">Tipo: @item.TipoProducto.Descripcion</small>
                                         </div>
                                         <div class="col-md-4">
-                                            <p><small class="text-muted">Ubicado en @item.Oferente.Comuna.Nombre %></small></p>
+                                            <p><small class="text-muted">Ubicado en @item.Oferente.Comuna.Nombre</small></p>
                                         </div>
                                     </div>
                                     <div class="form-row">

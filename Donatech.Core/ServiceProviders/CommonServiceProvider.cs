@@ -33,6 +33,34 @@ namespace Donatech.Core.ServiceProviders
 				return new ResultDto<List<ComunaDto>>(error: new ResultError("Error al intentar obtener las comunas desde DB", ex));
             }			
         }
-    }
+
+		public async Task<ResultDto<List<TipoProductoDto>>> GetListaTipoProductos()
+        {
+			try
+            {
+				var tipoProductos = await _dbContext.TipoProductos.Select(t =>
+					new TipoProductoDto
+					{
+						Id = t.Id,
+						Descripcion = t.Descripcion
+					}).ToListAsync();
+
+				return new ResultDto<List<TipoProductoDto>>(tipoProductos);
+            }
+			catch(Exception ex)
+            {
+				return new ResultDto<List<TipoProductoDto>>(error: new ResultError("Error al intentar obtener los tipo productos desde DB", ex));
+			}
+        }
+
+		public List<string> GetListaEstados()
+        {
+			return new List<string>
+			{
+				"Nuevo",
+				"Usado"
+			};
+        }
+	}
 }
 

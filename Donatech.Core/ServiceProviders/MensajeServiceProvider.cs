@@ -84,7 +84,6 @@ namespace Donatech.Core.ServiceProviders
                 return dbResult > 0 ?
                     new ResultDto<bool>(true) :
                     new ResultDto<bool>(error: new ResultError("Error al intentar registrar el mensaje. Por favor, intentelo nuevamente"));
-
             }
             catch (Exception ex)
             {

@@ -6,6 +6,8 @@ namespace Donatech.Core.ServiceProviders.Interfaces
 	public interface ICommonServiceProvider
 	{
 		Task<ResultDto<List<ComunaDto>>> GetListaComunas();
+		Task<ResultDto<List<TipoProductoDto>>> GetListaTipoProductos();
+		List<string> GetListaEstados();
 	}
 }
 

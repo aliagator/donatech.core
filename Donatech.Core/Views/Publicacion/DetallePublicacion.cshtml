@@ -1,0 +1,94 @@
+﻿@model Donatech.Core.ViewModels.DetallePublicacionViewModel
+@{
+    Layout = "_Layout";
+}
+
+@section CustomCss {
+
+    <style type="text/css">
+        .card-img-top {
+            width: 100%;
+            height: 15vw;
+            object-fit: cover;
+        }
+    </style>
+
+}
+
+@section Scripts {
+
+    <script>
+        const volverAction = () => {
+            history.back()
+        }
+
+        const aceptarDonacion = () => {
+            if (confirm("Esta seguro que desea aceptar la donacion?")) {
+                $('#btnAceptarDonacion').click()
+            }
+        }
+    </script>
+
+}
+
+<form asp-action="AceptarDonacion" method="post">
+    <div class="container">
+        @{
+            if (Model.DetalleContacto != null)
+            {
+                <div id="alertInfoMessage" class="alert alert-info" role="alert">
+                    <p>Donaci&oacute;n Aceptada!</p>
+                    <p><h4>Datos de Contacto</h4></p>
+                    <p><h5>@Model.DetalleContacto.NombreCompleto</h5></p>
+                    <p><span class='text-muted'>Celular: @Model.DetalleContacto.Celular</span></p>
+                    <p><span class='text-muted'>Email: @Model.DetalleContacto.Email</span></p>
+                    <p><span class='text-muted'>Direccion: @Model.DetalleContacto.Direccion, @Model.DetalleContacto.Comuna.Nombre</span></p>
+                </div>                                        
+            }
+        }
+
+        <div id="alertErrorMessage" class="alert alert-danger" role="alert" style="display:none">
+            &nbsp;
+        </div>
+
+        <div class="card mb-3">
+            <img id="imgProducto" class="card-img-top" alt="Card image cap" height="300" src="@Model.DetalleProducto.ImagenBase64">
+            <div class="card-body">
+                <h5 class="card-title">
+                    @Html.HiddenFor(m => m.DetalleProducto.Id)
+                    @Model.DetalleProducto.Titulo
+                </h5>
+                <p class="card-text">
+                    @Model.DetalleProducto.Descripcion
+                </p>
+                <hr />
+                <div class="form-row">
+                    <div class="col-md-2">
+                        <p><small class="text-muted">Estado: @Model.DetalleProducto.Estado</small></p>
+                    </div>
+                    <div class="col-md-6">
+                        <small class="text-muted">Tipo: @Model.DetalleProducto.TipoProducto.Descripcion</small>
+                    </div>
+                    <div class="col-md-4">
+                        <p><small class="text-muted">Ubicado en @Model.DetalleProducto.Oferente.Comuna.Nombre</small></p>
+                    </div>
+                </div>
+                <hr />
+                <p class="form-row">
+                    <small class="text-muted">Publicado el @Model.DetalleProducto.FchPublicacion.ToString("dd 'de' MMMM 'del' yyyy")</small>
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            @{
+                if (Model.DetalleContacto == null)
+                {
+                    <button type="button" class="btn btn-info btn-block my-4" onclick="aceptarDonacion()">Aceptar Donaci&oacute;n</button>
+                    <button type="submit" id="btnAceptarDonacion" style="display:none"></button>
+                }
+            }
+
+            <button class="btn btn-secondary btn-block my-4" name="btnCancelar" onclick="volverAction()">Volver</button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,129 @@
+﻿@model Donatech.Core.ViewModels.NuevaPublicacionViewModel
+@{
+    Layout = "_Layout";
+}
+
+@section Scripts {
+
+    <script>
+
+        const readURL = (input) => {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader()
+                reader.onload = (e) => {
+                    $('#imgPreview').attr('src', e.target.result)
+                    $(document.getElementsByName('ImagenBase64')).val(e.target.result)
+                }
+                reader.readAsDataURL(input.files[0])
+            }
+        }
+
+        const initPage = () => {
+            $(document).ready(() => {                
+                $("#Imagen").change(() => {
+                    readURL(document.getElementById("#Imagen"))
+                })
+            })
+        }
+
+        const volverAction = () => {
+            location.href = '/Home/Index'
+        }
+
+        initPage()        
+
+    </script>
+
+}
+
+<form asp-action="Nuevo" method="post">
+    <div class="container">
+
+        @{
+            if (Model.PublicacionRegistrada.HasValue)
+            {
+
+                if (Model.PublicacionRegistrada == true)
+                {
+                    <div id="alertInfoMessage" class="alert alert-info" role="alert">
+                        Publicacion ingresada correctamente
+                    </div>
+                }
+                else
+                {
+                    <div id="alertInfoMessage" class="alert alert-danger" role="alert">
+                        Error al intentar publicar el producto. Por favor, intentelo nuevamente
+                    </div>
+                }
+
+            }
+        }
+
+        <div id="alertInfoMessage" class="alert alert-info" role="alert" style="display:none">
+            &nbsp;
+        </div>
+        <div id="alertErrorMessage" class="alert alert-danger" role="alert" style="display:none">
+            &nbsp;
+        </div>
+
+        <fieldset>
+            <legend>Ingresar Publicaci&oacute;n</legend>
+            <div class="form-group col-md-6">
+                @Html.DisplayFor(m => m.Titulo)
+                @Html.TextBoxFor(m => m.Titulo, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Titulo)
+                <small id="titleHelp" class="form-text text-muted">M&aacute;ximo 30 caracteres.</small>
+            </div>
+            <div class="form-group col-md-6">
+                <div class="form-row">
+                    <div class="col-md-6">
+                        @Html.DisplayFor(m => m.Imagen)
+                        @Html.TextBoxFor(m => m.Imagen, new { @class = "form-control-file", type = "file" })
+                        @Html.HiddenFor(m => m.ImagenBase64)
+                        @Html.ValidationMessageFor(m => m.Imagen)
+                        <small id="imgHelp" class="form-text text-muted">Formatos aceptados .png, .jpg</small>
+                    </div>
+                    <div class="col-md-6">
+                        <img class="mb-4 img-thumbnail" id="imgPreview" alt="Preview" width="150">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="form-group col-md-6">
+            <label for="ddlTipoProducto">Tipo Producto</label>
+            <select name="TipoProducto" class="form-control">
+                @{
+                    foreach (var tipoProducto in Model.TipoProductoList)
+                    {
+                        <option value="@tipoProducto.Id">@tipoProducto.Descripcion</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-group col-md-6">
+            <label for="ddlEstadoProducto">Estado Producto</label>
+            <select name="EstadoProducto" class="form-control">
+                @{
+                    foreach (var estado in Model.EstadoList)
+                    {
+                        <option value="@estado">@estado</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-group col-md-6">
+            @Html.DisplayFor(m => m.Descripcion)
+            @Html.TextAreaFor(m => m.Descripcion, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Descripcion)
+            <small id="descHelp" class="form-text text-muted">Ingrese una descripci&oacute;n de m&aacute;ximo 300 caracteres.</small>
+        </div>
+
+        <div class="form-group col-md-6">
+            <button type="submit" class="btn btn-info btn-block my-4">Publicar</button>
+            <button type="button" class="btn btn-secondary btn-block my-4" name="btnCancelar" onclick="volverAction()">Cancelar</button>
+        </div>
+    </div>
+</form>
