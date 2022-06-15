@@ -217,7 +217,7 @@ namespace Donatech.Core.Controllers
                 if(result.HasError)                
                     throw new Exception("Error al intentar crear el usuario", result.Error?.Exception);
 
-
+                return View("Login", )
             }
             catch (Exception ex)
             {
