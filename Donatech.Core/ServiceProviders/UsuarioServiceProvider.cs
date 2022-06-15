@@ -145,6 +145,33 @@ namespace Donatech.Core.ServiceProviders
                 return new ResultDto<UsuarioDto>(error: new ResultError("Error al intentar obtener el Usuario", ex));
             }
         }
+
+        public async Task<ResultDto<bool>> CreateUsuario(UsuarioDto usuario)
+        {
+            try
+            {
+                _dbContext.Usuarios.Add(new Usuario
+                {
+                    Apellidos = usuario.Apellidos,
+                    Direccion = usuario.Direccion,
+                    Email = usuario.Email,
+                    IdComuna = usuario.IdComuna,
+                    IdRol = usuario.IdRol,
+                    Nombre = usuario.Nombre,
+                    Password = usuario.Password,
+                    Run = usuario.Run,
+                    Celular = usuario.Celular,
+                    Enabled = true
+                });
+
+                var dbResult = await _dbContext.SaveChangesAsync();
+                return new ResultDto<bool>(dbResult > 0);
+            }
+            catch(Exception ex)
+            {
+                return new ResultDto<bool>(error: new ResultError("Error al intentar crear el Usuario", ex));
+            }
+        }
     }
 }
 

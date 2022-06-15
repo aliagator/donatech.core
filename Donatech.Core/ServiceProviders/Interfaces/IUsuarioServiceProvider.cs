@@ -36,6 +36,12 @@ namespace Donatech.Core.ServiceProviders.Interfaces
         /// <param name="idUsuario">Id del usuario a obtener</param>
         /// <returns>UsuarioDto con todos los datos del usuario o vacío en caso contrario</returns>
         Task<ResultDto<UsuarioDto>> GetUsuarioById(int idUsuario);
+        /// <summary>
+        /// Metodo para crear un usuario
+        /// </summary>
+        /// <param name="usuario">Datos del usuario a crear</param>
+        /// <returns>True si el usuario se creo correctamente, False en caso contrario</returns>
+        Task<ResultDto<bool>> CreateUsuario(UsuarioDto usuario);
     }
 }
 

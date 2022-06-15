@@ -212,7 +212,12 @@ namespace Donatech.Core.Controllers
                     Run = viewModel.Run                    
                 };
 
-                //var result = await _usuarioServiceProvider.
+                var result = await _usuarioServiceProvider.CreateUsuario(usuarioData);
+
+                if(result.HasError)                
+                    throw new Exception("Error al intentar crear el usuario", result.Error?.Exception);
+
+
             }
             catch (Exception ex)
             {
@@ -221,9 +226,11 @@ namespace Donatech.Core.Controllers
                         mPrefix,
                         "Ha ocurrido un error inesperado",
                         ex);
+
+                ModelState.AddModelError("NotHandledError", "Ha ocurrido un error inesperado. Por favor, intentelo nuevamente");
             }
 
-            return RedirectToAction("Login");
+            return View(viewModel);
         }
 
 
