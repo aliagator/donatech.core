@@ -9,7 +9,7 @@ namespace Donatech.Core.ViewModels
 		[Required(ErrorMessage = "Debe ingresar un Run")]
 		[MaxLength(10, ErrorMessage = "El Run no puede superar los {1} caracteres")]
 		[Display(Name = "Run")]
-		[Remote("CheckRun", "Account")]
+		[Remote("CheckRun", "Account", ErrorMessage = "El Run ingresado ya existe en el sistema", HttpMethod = "Get")]
 		public string Run { get; set; } = string.Empty;
 
 		[Required(ErrorMessage = "Debe ingresar un Nombre")]
@@ -26,6 +26,7 @@ namespace Donatech.Core.ViewModels
 		[MaxLength(50, ErrorMessage = "El Email no puede superar los {1} caracteres")]
 		[EmailAddress(ErrorMessage = "Debe ingresar un Email válido")]
 		[Display(Name = "Email")]
+		[Remote("CheckEmail", "Account", ErrorMessage = "El Email ingresado ya existe en el sistema", HttpMethod = "Get")]
 		public string Email { get; set; } = string.Empty;
 
 		[Required(ErrorMessage = "Debe ingresar una Dirección")]
@@ -51,6 +52,10 @@ namespace Donatech.Core.ViewModels
 		[MaxLength(12, ErrorMessage = "El Teléfono no puede superar los {1} caracteres")]
 		[Display(Name = "Teléfono")]
 		public string Telefono { get; set; } = string.Empty;
+
+		[Required(ErrorMessage = "Debe selecciona un Rol")]
+		[Display(Name = "Rol")]
+		public int Rol { get; set; } = 0;
 	}
 }
 

@@ -3,47 +3,66 @@
     Layout = "_LayoutAccount";
 }
 
+@section Scripts {
+
+    <script>
+
+        $(document).ready(() => {
+            $('.field-validation-error').addClass('text-danger')
+        })
+
+    </script>
+
+}
+
 <form asp-action="CreateAccount" method="post">
     <div class="container">
 
         <div class="col" style="text-align:center">
             <div asp-validation-summary="All" class="text-danger">
-                @Html.ValidationSummary()
+                @Html.ValidationSummary(true)
             </div>
         </div>
 
         <fieldset>
             <legend>Datos Usuario</legend>
-            <div class="form-group col-md-6">                
-                @Html.LabelFor(a => a.Email)           
-                @Html.TextBoxFor(a => a.Email, new { @class = "form-control", placeholder = "Ej: juan.perez@gmail.com" })                
+            <div class="form-group col-md-6">
+                @Html.LabelFor(a => a.Email)
+                @Html.TextBoxFor(a => a.Email, new { @class = "form-control", placeholder = "Ej: juan.perez@gmail.com" })
+                <small class="text-danger">@Html.ValidationMessageFor(a => a.Email)</small>
             </div>
             <div class="form-group col-md-6">
                 @Html.LabelFor(a => a.Password)
-                @Html.PasswordFor(a => a.Password, new { @class = "form-control", placeholder = "Ej: 1234567890" })                
+                @Html.PasswordFor(a => a.Password, new { @class = "form-control", placeholder = "Ej: 1234567890" })
+                <small class="text-danger">@Html.ValidationMessageFor(a => a.Password)</small>
             </div>
             <div class="form-group col-md-6">
                 @Html.LabelFor(a => a.RePassword)
-                @Html.PasswordFor(a => a.RePassword, new { @class = "form-control", placeholder = "Ej: 1234567890" })                
+                @Html.PasswordFor(a => a.RePassword, new { @class = "form-control", placeholder = "Ej: 1234567890" })
+                <small class="text-danger">@Html.ValidationMessageFor(a => a.RePassword)</small>
             </div>
         </fieldset>
 
-        <div class="form-group col-md-6">            
+        <div class="form-group col-md-6">
             @Html.LabelFor(a => a.Run)
-            @Html.TextBoxFor(a => a.Run, new { @class = "form-control", placeholder = "Ej: 12345678-9" })            
-            <small id="runHelp" class="form-text text-muted">Ingrese el password sin puntos y con guion (ej: 12345678-9).</small>
+            @Html.TextBoxFor(a => a.Run, new { @class = "form-control", placeholder = "Ej: 12345678-9" })
+            <small id="runHelp" class="form-text text-muted">Ingrese el run sin puntos y con guion (ej: 12345678-9).</small>
+            <small class="text-danger">@Html.ValidationMessageFor(a => a.Run)</small>
         </div>
-        <div class="form-group col-md-6">            
+        <div class="form-group col-md-6">
             @Html.LabelFor(a => a.Nombre)
             @Html.TextBoxFor(a => a.Nombre, new { @class = "form-control", placeholder = "Ej: Juan" })
+            <small class="text-danger">@Html.ValidationMessageFor(a => a.Nombre)</small>
         </div>
         <div class="form-group col-md-6">
             @Html.LabelFor(a => a.Apellidos)
-            @Html.TextBoxFor(a => a.Apellidos, new { @class = "form-control", placeholder = "Ej: Perez" })            
+            @Html.TextBoxFor(a => a.Apellidos, new { @class = "form-control", placeholder = "Ej: Perez" })
+            <small class="text-danger">@Html.ValidationMessageFor(a => a.Apellidos)</small>
         </div>
         <div class="form-group col-md-6">
             @Html.LabelFor(a => a.Direccion)
-            @Html.TextBoxFor(a => a.Direccion, new { @class = "form-control", placeholder = "Ej: Av. Brasil #1210" })            
+            @Html.TextBoxFor(a => a.Direccion, new { @class = "form-control", placeholder = "Ej: Av. Brasil #1210" })
+            <small class="text-danger">@Html.ValidationMessageFor(a => a.Direccion)</small>
         </div>
         <div class="form-group col-md-6">
             @Html.LabelFor(a => a.Comuna)
@@ -52,16 +71,30 @@
                     foreach (var comuna in ViewBag.Comunas)
                     {
                         <option value="@comuna.Id">@comuna.Nombre</option>
-                    }                    
-                }                
-            </select>            
+                    }
+                }
+            </select>
+            <small class="text-danger">@Html.ValidationMessageFor(a => a.Comuna)</small>
+        </div>
+        <div class="form-group col-md-6">
+            @Html.LabelFor(a => a.Rol)
+            <select asp-for="Rol" name="Rol" class="form-control">
+                @{
+                    foreach (var rol in ViewBag.Roles)
+                    {
+                        <option value="@rol.Id">@rol.Descripcion</option>
+                    }
+                }
+            </select>
+            <small class="text-danger">@Html.ValidationMessageFor(a => a.Rol)</small>
         </div>
         <div class="form-group col-md-6">
             @Html.LabelFor(a => a.Telefono)
-            @Html.TextBoxFor(a => a.Telefono, new { @class = "form-control", placeholder = "Ej: 56912345678" })            
-        </div>        
+            @Html.TextBoxFor(a => a.Telefono, new { @class = "form-control", placeholder = "Ej: 56912345678" })
+            <small class="text-danger">@Html.ValidationMessageFor(a => a.Telefono)</small>
+        </div>
         <div class="form-group col-md-6">
-            <button type="submit" class="btn btn-info btn-block my-4">Registrarme</button>            
+            <button type="submit" class="btn btn-info btn-block my-4">Registrarme</button>
         </div>
     </div>
 </form>

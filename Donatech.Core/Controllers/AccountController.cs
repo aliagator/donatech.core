@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Donatech.Core.Model;
 using Donatech.Core.ServiceProviders.Interfaces;
 using Donatech.Core.Utils;
 using Donatech.Core.ViewModels;
@@ -162,19 +163,10 @@ namespace Donatech.Core.Controllers
 
             try
             {
-                // Obtenemos las comunas desde DB
-                var listComunas = await _commonServiceProvider.GetListaComunas();
-                // Validamos que la respuesta venga sin errores
-                if(listComunas.HasError)
-                {
-                    // En caso de tener errores, lo almacenamos en el logger
-                    _logger.AddCustomLog(cPrefix,
-                       mPrefix,
-                       listComunas.Error!.ErrorMessage!,
-                       listComunas.Error!.Exception);
-                }
-                // Caso contrario, enviamos las comunas en un ViewBag
-                ViewBag.Comunas = listComunas.Result!;
+                // Agregamos las comunas al ViewBag
+                await AddComunasToViewBag();
+                // Agregamos los roles al ViewBag
+                AddRolesToViewBag();
             }
             catch(Exception ex)
             {
@@ -188,46 +180,153 @@ namespace Donatech.Core.Controllers
             return View();
         }
 
-        //public async Task<IActionResult> CreateAccount([FromForm]CreateAccountViewModel viewModel)
-        //{
-        //    string mPrefix = "[CreateAccount([FromForm]CreateAccountViewModel viewModel)]";
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> CreateAccount(CreateAccountViewModel viewModel)
+        {
+            string mPrefix = "[CreateAccount(CreateAccountViewModel viewModel)]";
 
-        //    try
-        //    {
-        //        if (!ModelState.IsValid)
-        //        {
-        //            return View(viewModel);
-        //        }
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        // En caso de obtener una excepción inesperada, guardamos el valor en el logger
-        //        _logger.AddCustomLog(cPrefix,
-        //                mPrefix,
-        //                "Ha ocurrido un error inesperado",
-        //                ex);
-        //    }
+            try
+            {
+                // Agregamos las comunas al ViewBag
+                await AddComunasToViewBag();
+                // Agregamos los roles al ViewBag
+                AddRolesToViewBag();
 
-        //    return RedirectToAction("Login");
-        //}
+                if (!ModelState.IsValid)
+                {
+                    return View(viewModel);
+                }
+
+                var usuarioData = new UsuarioDto
+                {
+                    Apellidos = viewModel.Apellidos,
+                    Celular = viewModel.Telefono,
+                    Direccion = viewModel.Direccion,
+                    Email = viewModel.Email,
+                    Enabled = true,
+                    IdComuna = viewModel.Comuna,
+                    IdRol = viewModel.Rol,
+                    Nombre = viewModel.Nombre,
+                    Password = viewModel.Password,
+                    Run = viewModel.Run                    
+                };
+
+                //var result = await _usuarioServiceProvider.
+            }
+            catch (Exception ex)
+            {
+                // En caso de obtener una excepción inesperada, guardamos el valor en el logger
+                _logger.AddCustomLog(cPrefix,
+                        mPrefix,
+                        "Ha ocurrido un error inesperado",
+                        ex);
+            }
+
+            return RedirectToAction("Login");
+        }
 
 
-        #region validaciones
-        //[AllowAnonymous]
-        //[AcceptVerbs("GET", "POST")]
-        //public async Task<IActionResult> CheckExistingRun(string run)
-        //{
-        //    try
-        //    {
+        #region private methods
+        private async Task AddComunasToViewBag()
+        {
+            string mPrefix = "[AddComunasToViewBag()]";
+            try
+            {
+                // Obtenemos las comunas desde DB
+                var listComunas = await _commonServiceProvider.GetListaComunas();
+                // Validamos que la respuesta venga sin errores
+                if (listComunas.HasError)
+                {
+                    // En caso de tener errores, lo almacenamos en el logger
+                    _logger.AddCustomLog(cPrefix,
+                       mPrefix,
+                       listComunas.Error!.ErrorMessage!,
+                       listComunas.Error!.Exception);
+                }
+                // Caso contrario, enviamos las comunas en un ViewBag
+                ViewBag.Comunas = listComunas.Result!;
+            }
+            catch(Exception ex)
+            {
+                // En caso de tener errores, lo almacenamos en el logger
+                _logger.AddCustomLog(cPrefix,
+                   mPrefix,
+                   "Ha ocurrido un error inesperado",
+                   ex);
 
-        //    }
-        //    catch(Exception ex)
-        //    {
+                ViewBag.Comunas = new List<ComunaDto>();
+            }
+        }
 
-        //    }
+        private void AddRolesToViewBag()
+        {
+            ViewBag.Roles = new (int Id, string Descripcion)[]
+            {
+                new ((int)EnumUtils.RolEnum.Oferente, EnumUtils.RolEnum.Oferente.ToString()),
+                new ((int)EnumUtils.RolEnum.Demandante, EnumUtils.RolEnum.Demandante.ToString())
+            };
+        }
+        #endregion
 
-        //    return Json(true);
-        //}
+        #region validaciones remote attributes
+        [AcceptVerbs("Get", "Post")]
+        [AllowAnonymous]        
+        public JsonResult CheckRun(string run)
+        {
+            string mPrefix = "[CheckRun(string run)]";
+
+            try
+            {
+                var result = _usuarioServiceProvider.ValidateExistingRun(run);
+
+                if (result.HasError)
+                {
+                    return Json(data: false);
+                }
+
+                return Json(data: result.Result!);
+            }
+            catch (Exception ex)
+            {
+                // En caso de obtener una excepción inesperada, guardamos el valor en el logger
+                _logger.AddCustomLog(cPrefix,
+                        mPrefix,
+                        "Ha ocurrido un error inesperado",
+                        ex);
+            }
+
+            return Json(data: false);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        [AllowAnonymous]
+        public JsonResult CheckEmail(string email)
+        {
+            string mPrefix = "[CheckEmail(string email)]";
+
+            try
+            {
+                var result = _usuarioServiceProvider.ValidateExistingEmail(email);
+
+                if (result.HasError)
+                {
+                    return Json(result.Error!.ErrorMessage);
+                }
+
+                return Json(result.Result!);
+            }
+            catch (Exception ex)
+            {
+                // En caso de obtener una excepción inesperada, guardamos el valor en el logger
+                _logger.AddCustomLog(cPrefix,
+                        mPrefix,
+                        "Ha ocurrido un error inesperado",
+                        ex);
+            }
+
+            return Json(false);
+        }
         #endregion
     }
 }

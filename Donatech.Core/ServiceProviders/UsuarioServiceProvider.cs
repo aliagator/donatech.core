@@ -15,11 +15,11 @@ namespace Donatech.Core.ServiceProviders
 			_dbContext = dbContext;
 		}
         
-        public async Task<ResultDto<bool>> ValidateExistingEmail(string email)
+        public ResultDto<bool> ValidateExistingEmail(string email)
         {
             try
             {
-                var exists = await _dbContext.Usuarios.FirstOrDefaultAsync(u =>
+                var exists = _dbContext.Usuarios.FirstOrDefault(u =>
                     u.Email.ToLower().Equals(email.ToLower()));
 
                 return new ResultDto<bool>(exists == null);
@@ -30,11 +30,11 @@ namespace Donatech.Core.ServiceProviders
             }
         }
 
-        public async Task<ResultDto<bool>> ValidateExistingRun(string run)
+        public ResultDto<bool> ValidateExistingRun(string run)
         {
             try
             {
-                var exists = await _dbContext.Usuarios.FirstOrDefaultAsync(u =>
+                var exists = _dbContext.Usuarios.FirstOrDefault(u =>
                     u.Run.ToLower().Equals(run.ToLower()));
 
                 return new ResultDto<bool>(exists == null);
