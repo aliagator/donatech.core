@@ -7,4 +7,11 @@
         public DateTime FchRequest { get; set; }
         public string? Username { get; set; }
     }
+
+    public class FiltroLogRequestDto
+    {
+        public DateTime? FchInicio { get; set; }
+        public DateTime? FchTermino { get; set; }
+        public string Url { get; set; }
+    }
 }

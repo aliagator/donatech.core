@@ -46,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Home\" />
-    <Folder Include="ViewModels\" />
     <Folder Include="Views\Account\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="Views\Contacto\" />

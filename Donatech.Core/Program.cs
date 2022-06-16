@@ -38,6 +38,8 @@ builder.Services.AddScoped<IMensajeServiceProvider, MensajeServiceProvider>();
 builder.Services.AddScoped<ICommonServiceProvider, CommonServiceProvider>();
 // Agregamos la instancia del MailServiceProvider
 builder.Services.AddScoped<IMailServiceProvider, MailServiceProvider>();
+// Agregamos la instancia del ReportServiceProvider
+builder.Services.AddScoped<IReporteServiceProvider, ReporteServiceProvider>();
 // Agregar connection string a la clase DonatchDbContext
 // Usamos ServiceLifetime.Scoped para evitar problemas de sincronización de datos con la DB y EntityFramework
 // y que crea una instancia de las dependencias por request

@@ -1,5 +1,172 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model Donatech.Core.ViewModels.ReporteDonacionViewModel
 @{
+    Layout = "_Layout";
 }
+
+@section CustomCss {
+    <style type="text/css">
+    .highcharts-figure,
+    .highcharts-data-table table {
+        min-width: 310px;
+        max-width: 800px;
+        margin: 1em auto;
+    }
+
+    #container {
+        height: 400px;
+    }
+
+    .highcharts-data-table table {
+        font-family: Verdana, sans-serif;
+        border-collapse: collapse;
+        border: 1px solid #ebebeb;
+        margin: 10px auto;
+        text-align: center;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .highcharts-data-table caption {
+        padding: 1em 0;
+        font-size: 1.2em;
+        color: #555;
+    }
+
+    .highcharts-data-table th {
+        font-weight: 600;
+        padding: 0.5em;
+    }
+
+    .highcharts-data-table td,
+    .highcharts-data-table th,
+    .highcharts-data-table caption {
+        padding: 0.5em;
+    }
+
+    .highcharts-data-table thead tr,
+    .highcharts-data-table tr:nth-child(even) {
+        background: #f8f8f8;
+    }
+
+    .highcharts-data-table tr:hover {
+        background: #f1f7ff;
+    }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        Highcharts.chart('container', {
+           chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Tipos de Donaciones'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: '%'
+                }
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    }
+                }
+            },
+            series: [{
+                name: 'Tipos',
+                colorByPoint: true,
+                data: @Html.Raw(Json.Serialize(ViewBag.Series))
+            }]
+        });
+
+        $(document).ready(() => {
+            var data = @Html.Raw(Json.Serialize(ViewBag.Series))
+            
+            if(data.length == 0){
+                $('#chart').hide()
+            }
+        })
+    </script>
+}
+
+<div class="container">
+    <form action="Donaciones" method="post">
+        <fieldset><legend>Filtro de b&uacute;squeda</legend>
+          <div class="form-group row">
+              <label for="FiltroFchInicio" class="col-sm-2 col-form-label">Fecha de Inicio</label>
+              <div class="col-sm-10">
+                @Html.TextBoxFor(m => m.FiltroFchInicio, null, new { @class = "form-control", type = "date", placeholder = "Fecha Inicio: Ej. 01/01/2001" })
+              </div>
+          </div>
+          <div class="form-group row">
+              <label for="FiltroFchInicio"  class="col-sm-2 col-form-label">Fecha de Termino</label>
+              <div class="col-sm-10">
+                @Html.TextBoxFor(m => m.FiltroFchTermino, null, new { @class = "form-control", type = "date", placeholder = "Fecha Termino: Ej. 02/01/2001" })
+              </div>
+          </div>
+          <div class="form-group">
+              <button type="submit" class="btn btn-primary">Buscar</button>
+          </div>
+        </fieldset>
+    </form>
+
+    <br />
+
+    <fieldset>
+        <legend>Lista de Datos</legend>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tipo de Producto</th>
+                    <th>Cantidad de Donaciones</th>
+                    <th>Porcentaje</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    if(ViewBag.RawData == null)
+                    {
+                        <tr><td colspan="2">No existen datos para mostrar</td></tr>
+                    }
+                    else
+                    {
+                        foreach(var item in ViewBag.RawData)
+                        {
+                            <tr>
+                                <td>@item.name</td>
+                                <td>@item.cantidad</td>
+                                <td>@item.y %</td>
+                            </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+
+    <div id="chart" class="row">
+        <fieldset>
+            <legend>Gr&aacute;fico de Datos</legend>
+
+            <figure class="highcharts-figure">
+                <div id="container"></div>
+                <p class="highcharts-description">
+                    Cantidad de visitas realizadas durante un filtro de fecha determinado.
+                </p>
+            </figure>
+        </fieldset>
+    </div>
+
+</div>
