@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="3.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="6.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.5">
@@ -19,6 +20,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="MimeKit" Version="3.3.0" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.0.0" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.5" />
@@ -27,6 +29,7 @@
 
   <ItemGroup>
     <None Remove="Controller\" />
+    <None Remove="Pages\Activation.html" />
     <None Remove="Views\" />
     <None Remove="Views\Home\" />
     <None Remove="ViewModels\" />
@@ -47,12 +50,14 @@
     <Folder Include="ViewModels\" />
     <Folder Include="Views\Account\" />
     <Folder Include="wwwroot\images\" />
-    <Folder Include="ServiceProviders\" />
-    <Folder Include="ServiceProviders\Interfaces\" />
-    <Folder Include="Utils\" />
     <Folder Include="Views\Contacto\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot\pages\Activation.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

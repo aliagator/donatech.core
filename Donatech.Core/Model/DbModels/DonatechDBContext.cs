@@ -201,6 +201,10 @@ namespace Donatech.Core.Model.DbModels
 
                 entity.Property(e => e.Apellidos).HasMaxLength(80);
 
+                entity.Property(e => e.AccountToken)
+                   .HasMaxLength(40)
+                   .IsUnicode(false);
+
                 entity.Property(e => e.Celular)
                     .HasMaxLength(12)
                     .IsUnicode(false);

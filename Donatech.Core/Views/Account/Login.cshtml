@@ -8,7 +8,8 @@
     <script type="text/javascript">
         $(document).ready(() => {
             if ($('#validation > .validation-summary-valid > ul > li').html() == "" &&
-                $('#validation > .session-expired').html() == undefined) {
+                $('#validation > .session-expired').html() == undefined &&
+                $('#validation > .activate-account').html() == undefined) {
                 $('#validation').hide()
             } else {
                 $('#validation').show()
@@ -26,6 +27,10 @@
                         if (Context.Request.Query["c"].Equals("401"))
                         {
                             <p class="session-expired">La sesi&oacute;n no ha sido iniciada o ha expirado :(</p>
+                        }
+                        if(TempData["ActivateAccount"] != null)
+                        {
+                            <p class="activate-account">@TempData["ActivateAccount"]</p>
                         }
                     }
 

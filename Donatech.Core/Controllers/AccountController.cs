@@ -23,18 +23,25 @@ namespace Donatech.Core.Controllers
         private readonly IUsuarioServiceProvider _usuarioServiceProvider;
         private readonly ICommonServiceProvider _commonServiceProvider;
         private readonly ITokenServiceProvider _tokenServiceProvider;
+        private readonly IMailServiceProvider _mailServiceProvider;
+        private readonly IWebHostEnvironment _hostingEnvironment;
+
 
         public AccountController(ILogger<AccountController> logger,
             IConfiguration configuration,
             IUsuarioServiceProvider usuarioServiceProvider,
             ICommonServiceProvider commonServiceProvider,
-            ITokenServiceProvider tokenServiceProvider)
+            ITokenServiceProvider tokenServiceProvider,
+            IMailServiceProvider mailServiceProvider,
+            IWebHostEnvironment hostingEnvironment)
         {
             _logger = logger;
             _configuration = configuration;
             _usuarioServiceProvider = usuarioServiceProvider;
             _commonServiceProvider = commonServiceProvider;
             _tokenServiceProvider = tokenServiceProvider;
+            _mailServiceProvider = mailServiceProvider;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         [HttpGet]
@@ -198,6 +205,8 @@ namespace Donatech.Core.Controllers
                     return View(viewModel);
                 }
 
+                string activationToken = Guid.NewGuid().ToString().ToUpper();
+
                 var usuarioData = new UsuarioDto
                 {
                     Apellidos = viewModel.Apellidos,
@@ -209,7 +218,9 @@ namespace Donatech.Core.Controllers
                     IdRol = viewModel.Rol,
                     Nombre = viewModel.Nombre,
                     Password = viewModel.Password,
-                    Run = viewModel.Run                    
+                    Run = viewModel.Run,
+                    Validated = false,
+                    AccountToken = activationToken
                 };
 
                 var result = await _usuarioServiceProvider.CreateUsuario(usuarioData);
@@ -217,7 +228,28 @@ namespace Donatech.Core.Controllers
                 if(result.HasError)                
                     throw new Exception("Error al intentar crear el usuario", result.Error?.Exception);
 
-                return View("Login", )
+                if (result.Result)
+                {
+                    string htmlPath = Path.Combine(_hostingEnvironment.WebRootPath, "pages", "Activation.html");
+                    // Obtenemos el html con el template de activacion de cuenta
+                    var htmlActivate = System.IO.File.ReadAllText(htmlPath);
+                    // Obtenemos la url con el metodo para la validacion de token de activacion de cuenta
+                    var activateUrl = _configuration.GetValue<string>("AccountSettings:AccountActivateLink");
+                    // Reemplazamos el token de la url con el generado al registrar el nuevo usuario
+                    activateUrl = activateUrl?.Replace("[TOKEN]", activationToken);
+                    // Reemplazamos el link final en el template html
+                    htmlActivate = htmlActivate?.Replace("[ACCOUNT_TOKEN_LINK]", activateUrl);
+                    // Enviamos el email de validacion de cuenta
+                    await _mailServiceProvider.SendEmailAsync(new MailRequestDto
+                    {
+                        Body = htmlActivate,
+                        Subject = "Donatech - Activacion Cuenta",
+                        ToEmail = viewModel.Email
+                    });
+                }
+
+                ModelState.AddModelError("ValidateAccount", $"Hemos enviado un email a la cuenta {viewModel.Email} para activar la cuenta");
+                return View("Login", new LoginViewModel());
             }
             catch (Exception ex)
             {
@@ -233,6 +265,34 @@ namespace Donatech.Core.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Activate(string token)
+        {
+            string mPrefix = "[Activate(string token)]";
+
+            try
+            {
+                var result = await _usuarioServiceProvider.ValidateAccount(token);
+
+                if (result.HasError)
+                    throw new Exception(result.Error!.ErrorMessage, result.Error!.Exception);
+
+                TempData["ActivateAccount"] = result.Result ? "Cuenta activada correctamente!" : "No se ha podido activar la cuenta";
+            }
+            catch(Exception ex)
+            {
+                // En caso de obtener una excepción inesperada, guardamos el valor en el logger
+                _logger.AddCustomLog(cPrefix,
+                        mPrefix,
+                        "Ha ocurrido un error inesperado",
+                        ex);
+
+                TempData["ActivateAccount"] = "Ha ocurrido un error inesperado al intentar activar la cuenta. Por favor, intentelo nuevamente";
+            }
+
+            return RedirectToAction("Login");
+        }
 
         #region private methods
         private async Task AddComunasToViewBag()

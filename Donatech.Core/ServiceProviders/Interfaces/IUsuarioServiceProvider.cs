@@ -42,6 +42,12 @@ namespace Donatech.Core.ServiceProviders.Interfaces
         /// <param name="usuario">Datos del usuario a crear</param>
         /// <returns>True si el usuario se creo correctamente, False en caso contrario</returns>
         Task<ResultDto<bool>> CreateUsuario(UsuarioDto usuario);
+        /// <summary>
+        /// Metodo para validar la cuenta de un usuario
+        /// </summary>
+        /// <param name="token">Token de validacion</param>
+        /// <returns>True si la cuenta se activo correctamente, False en caso contrario</returns>
+        Task<ResultDto<bool>> ValidateAccount(string token);
     }
 }
 

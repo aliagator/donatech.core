@@ -279,6 +279,17 @@ namespace Donatech.Core.Controllers
 
             try
             {
+                var lstEstados = _commonServiceProvider.GetListaEstados();
+                var lstTipoProductos = await _commonServiceProvider.GetListaTipoProductos();
+
+                if (lstTipoProductos.HasError)
+                {
+                    throw lstTipoProductos.Error!.Exception!;
+                }
+
+                viewModel.EstadoList = lstEstados;
+                viewModel.TipoProductoList = lstTipoProductos.Result!;
+
                 if (!ModelState.IsValid)
                 {
                     return View(viewModel);

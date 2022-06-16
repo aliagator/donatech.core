@@ -21,6 +21,8 @@ builder.Host.ConfigureLogging(logBuilder =>
     logBuilder.AddNLog("nlog.config");
 });
 
+// Configuramos los valores del envio de emails
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 // Add services to the container.
 builder.Services.AddRazorPages();
 // Agregamos las inyecciones de dependencias de los ServiceProviders
@@ -34,6 +36,8 @@ builder.Services.AddScoped<IProductoServiceProvider, ProductoServiceProvider>();
 builder.Services.AddScoped<IMensajeServiceProvider, MensajeServiceProvider>();
 // Agregamos la instancia del CommonServiceProvider
 builder.Services.AddScoped<ICommonServiceProvider, CommonServiceProvider>();
+// Agregamos la instancia del MailServiceProvider
+builder.Services.AddScoped<IMailServiceProvider, MailServiceProvider>();
 // Agregar connection string a la clase DonatchDbContext
 // Usamos ServiceLifetime.Scoped para evitar problemas de sincronización de datos con la DB y EntityFramework
 // y que crea una instancia de las dependencias por request

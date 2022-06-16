@@ -161,7 +161,9 @@ namespace Donatech.Core.ServiceProviders
                     Password = usuario.Password,
                     Run = usuario.Run,
                     Celular = usuario.Celular,
-                    Enabled = true
+                    Enabled = true,
+                    Validated = usuario.Validated,
+                    AccountToken = usuario.AccountToken
                 });
 
                 var dbResult = await _dbContext.SaveChangesAsync();
@@ -170,6 +172,30 @@ namespace Donatech.Core.ServiceProviders
             catch(Exception ex)
             {
                 return new ResultDto<bool>(error: new ResultError("Error al intentar crear el Usuario", ex));
+            }
+        }
+
+        public async Task<ResultDto<bool>> ValidateAccount(string token)
+        {
+            try
+            {
+                var usuario = await _dbContext.Usuarios.FirstOrDefaultAsync(u =>
+                    u.AccountToken == token &&
+                    u.Validated == false &&
+                    u.Enabled == true
+                );
+
+                if (usuario == null)
+                    return new ResultDto<bool>(false);
+
+                usuario.Validated = true;
+
+                var dbResult = await _dbContext.SaveChangesAsync();
+                return new ResultDto<bool>(dbResult > 0);
+            }
+            catch(Exception ex)
+            {
+                return new ResultDto<bool>(error: new ResultError("Error al intentar validar la cuenta", ex));
             }
         }
     }

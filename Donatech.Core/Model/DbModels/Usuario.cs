@@ -24,6 +24,8 @@ namespace Donatech.Core.Model.DbModels
         public int IdRol { get; set; }
         public bool Enabled { get; set; }
         public string Celular { get; set; } = null!;
+        public bool? Validated { get; set; }
+        public string? AccountToken { get; set; }
 
         public virtual Comuna IdComunaNavigation { get; set; } = null!;
         public virtual ICollection<Mensaje> MensajeIdEmisorNavigations { get; set; }

@@ -24,6 +24,8 @@ namespace Donatech.Core.Model
         public int IdRol { get; set; }
         public bool Enabled { get; set; }
         public string Celular { get; set; } = string.Empty;
+        public bool? Validated { get; set; }
+        public string? AccountToken { get; set; }
         public Lazy<string> NombreCompleto
         {
             get
