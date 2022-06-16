@@ -8,6 +8,7 @@ namespace Donatech.Core.ServiceProviders.Interfaces
 		Task<ResultDto<List<ComunaDto>>> GetListaComunas();
 		Task<ResultDto<List<TipoProductoDto>>> GetListaTipoProductos();
 		List<string> GetListaEstados();
+		Task AddLogRequestAsync(LogRequestDto logRequest);
 	}
 }
 

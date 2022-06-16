@@ -52,6 +52,13 @@ namespace Donatech.Core.Controllers
 
             try
             {
+                // Guardamos el log del request
+                _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Account/Login"
+                });
+
                 // Limpiamos la sesión actual
                 JwtSessionUtils.RemoveJwtTokenAndSession(HttpContext);
             }
@@ -75,6 +82,14 @@ namespace Donatech.Core.Controllers
 
             try
             {
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Account/Login",
+                    Username = viewModel.Email
+                });
+
                 // Validamos que el ViewModel venga correcto
                 if (!ModelState.IsValid)
                 {
@@ -134,12 +149,19 @@ namespace Donatech.Core.Controllers
         }
 
         [HttpGet]        
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
             string mPrefix = "[Logout()]";
 
             try
             {
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Account/Logout"
+                });
+
                 // Limpiamos la sesión actual
                 JwtSessionUtils.RemoveJwtTokenAndSession(HttpContext);
             }
@@ -170,6 +192,13 @@ namespace Donatech.Core.Controllers
 
             try
             {
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Account/CreateAccount"
+                });
+
                 // Agregamos las comunas al ViewBag
                 await AddComunasToViewBag();
                 // Agregamos los roles al ViewBag
@@ -195,6 +224,13 @@ namespace Donatech.Core.Controllers
 
             try
             {
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Account/CreateAccount"
+                });
+
                 // Agregamos las comunas al ViewBag
                 await AddComunasToViewBag();
                 // Agregamos los roles al ViewBag
@@ -273,6 +309,13 @@ namespace Donatech.Core.Controllers
 
             try
             {
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Account/Activate"
+                });
+
                 var result = await _usuarioServiceProvider.ValidateAccount(token);
 
                 if (result.HasError)

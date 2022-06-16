@@ -43,7 +43,7 @@ namespace Donatech.Core.ServiceProviders
                 int index = 0;
                 foreach (var item in publicacionesList)
                 {
-                    item.ImagenBase64 = $"{item.ImagenMimeType},{(item?.Imagen != null ? Convert.ToBase64String(item?.Imagen!) : "")}";
+                    item.ImagenBase64 = $"data:{item.ImagenMimeType};base64, {(item?.Imagen != null ? Convert.ToBase64String(item?.Imagen!) : "")}";
                     item.Imagen = null!;
                     item.ImagenMimeType = null!;
                     item.UrlContacto = $"/Contacto/Mensajes?idProducto={item.Id}&idUsuario={item.IdDemandante}";
@@ -113,7 +113,7 @@ namespace Donatech.Core.ServiceProviders
 
                 foreach (var item in publicacionesList)
                 {
-                    item.ImagenBase64 = $"{item.ImagenMimeType},{Convert.ToBase64String(item.Imagen!)}";
+                    item.ImagenBase64 = $"data:{item.ImagenMimeType};base64, {Convert.ToBase64String(item.Imagen!)}";
                     item.Imagen = null;
                     item.ImagenMimeType = null;
                 }
@@ -174,7 +174,7 @@ namespace Donatech.Core.ServiceProviders
                         Enabled = p.Enabled
                     }).FirstOrDefaultAsync();
 
-                item.ImagenBase64 = $"{item.ImagenMimeType},{Convert.ToBase64String(item.Imagen!)}";
+                item.ImagenBase64 = $"data:{item.ImagenMimeType};base64, {Convert.ToBase64String(item.Imagen!)}";
                 item.Imagen = null;
                 item.ImagenMimeType = null;
 

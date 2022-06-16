@@ -15,23 +15,34 @@ namespace Donatech.Core.Controllers
         private readonly string cPrefix = "HomeController";
         private readonly ILogger _logger;
         private readonly IUsuarioServiceProvider _usuarioServiceProvider;
+        private readonly ICommonServiceProvider _commonServiceProvider;
 
         public HomeController(ILogger<HomeController> logger,
-            IUsuarioServiceProvider usuarioServiceProvider)
+            IUsuarioServiceProvider usuarioServiceProvider,
+            ICommonServiceProvider commonServiceProvider)
         {
             _logger = logger;
             _usuarioServiceProvider = usuarioServiceProvider;
+            _commonServiceProvider = commonServiceProvider;
         }
         
         // GET: /<controller>/        
         [HttpGet]
         [JwtAuthorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             string mPrefix = "[Index()]";
 
             try
             {
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Home/Index",
+                    Username = JwtSessionUtils.GetCurrentUserSession(HttpContext)?.Email
+                });
+
                 var userSession = HttpContext.Session.Get<UsuarioDto>(Constants.UserSessionContextId);
 
                 return View(new HomeViewModel

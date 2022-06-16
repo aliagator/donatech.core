@@ -38,6 +38,15 @@ namespace Donatech.Core.Controllers
             try
             {
                 var currentUser = JwtSessionUtils.GetCurrentUserSession(HttpContext);
+
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Publicacion/MisPublicaciones",
+                    Username = currentUser?.Email
+                });
+
                 var result = await _productoServiceProvider.GetProductosByFilter(new Model.FilterProductoDto
                 {
                     IdOferente = currentUser?.Id
@@ -82,6 +91,15 @@ namespace Donatech.Core.Controllers
             try
             {
                 var currentUser = JwtSessionUtils.GetCurrentUserSession(HttpContext);
+
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Publicacion/MiHistorial",
+                    Username = currentUser?.Email
+                });
+
                 var result = await _productoServiceProvider.GetProductosByFilter(new Model.FilterProductoDto
                 {
                     IdDemandante = currentUser?.Id
@@ -119,8 +137,16 @@ namespace Donatech.Core.Controllers
         }
 
         [HttpGet]
-        public IActionResult Buscar()
+        public async Task<IActionResult> Buscar()
         {
+            // Guardamos el log del request
+            await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+            {
+                FchRequest = DateTime.Now,
+                Url = "/Publicacion/MiHistorial",
+                Username = JwtSessionUtils.GetCurrentUserSession(HttpContext)?.Email
+            });
+
             return View(new PublicacionListViewModel());
         }
 
@@ -130,7 +156,15 @@ namespace Donatech.Core.Controllers
             string mPrefix = "[Buscar(PublicacionListViewModel model)]";
 
             try
-            {                
+            {
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Publicacion/Buscar",
+                    Username = JwtSessionUtils.GetCurrentUserSession(HttpContext)?.Email
+                });
+
                 var publicaciones = await _productoServiceProvider.GetProductosByText(model.TextSearch);
 
                 if(publicaciones.Result != null)
@@ -159,6 +193,14 @@ namespace Donatech.Core.Controllers
 
             try
             {
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Publicacion/DetallePublicacion",
+                    Username = JwtSessionUtils.GetCurrentUserSession(HttpContext)?.Email
+                });
+
                 var publicacion = await _productoServiceProvider.GetDetalleProductoById(id);
 
                 if (publicacion.Result != null)
@@ -189,9 +231,15 @@ namespace Donatech.Core.Controllers
 
             try
             {
-                Console.WriteLine($"DetallePublicacion: {viewModel.DetalleProducto.Id}");
-
                 var userSession = JwtSessionUtils.GetCurrentUserSession(HttpContext)!;
+
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Publicacion/DetallePublicacion",
+                    Username = userSession.Email
+                });
 
                 ProductoDto producto = new ProductoDto
                 {
@@ -239,6 +287,14 @@ namespace Donatech.Core.Controllers
 
             try
             {
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Publicacion/Nuevo",
+                    Username = JwtSessionUtils.GetCurrentUserSession(HttpContext)?.Email
+                });
+
                 var lstEstados = _commonServiceProvider.GetListaEstados();
                 var lstTipoProductos = await _commonServiceProvider.GetListaTipoProductos();
 
@@ -279,6 +335,14 @@ namespace Donatech.Core.Controllers
 
             try
             {
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Publicacion/Nuevo",
+                    Username = JwtSessionUtils.GetCurrentUserSession(HttpContext)?.Email
+                });
+
                 var lstEstados = _commonServiceProvider.GetListaEstados();
                 var lstTipoProductos = await _commonServiceProvider.GetListaTipoProductos();
 
@@ -295,6 +359,21 @@ namespace Donatech.Core.Controllers
                     return View(viewModel);
                 }
 
+                if(Request.Form.Files.Count == 0)
+                {
+                    ModelState.AddModelError("Imagen", "Debe ingresar una Imagen del Producto");
+                    return View(viewModel);
+                }
+
+                var imageData = Request.Form.Files[0];
+                byte[] imageBytes = null;
+
+                using (var stream = new MemoryStream((int)imageData.Length))
+                {
+                    await imageData.CopyToAsync(stream);
+                    imageBytes = stream.ToArray();
+                }
+
                 var producto = new ProductoDto();
                 producto.Titulo = viewModel.Titulo;
                 producto.Descripcion = viewModel.Descripcion;
@@ -303,8 +382,8 @@ namespace Donatech.Core.Controllers
                 producto.IdOferente = JwtSessionUtils.GetCurrentUserSession(HttpContext)!.Id;
                 producto.IdDemandante = null;
                 producto.IdTipo = viewModel.IdTipo;
-                producto.Imagen = viewModel.Imagen;
-                producto.ImagenMimeType = viewModel.ImagenMimeType;
+                producto.Imagen = imageBytes;
+                producto.ImagenMimeType = imageData.ContentType;
                 producto.Enabled = true;
 
                 var result = await _productoServiceProvider.CreateProducto(producto);

@@ -25,10 +25,9 @@ namespace Donatech.Core.ViewModels
         public List<string>? EstadoList { get; set; }
 
         [Display(Name = "Imagen")]
-        [Required(ErrorMessage = "Debe ingresar una Imagen del Producto")]
-        public byte[] Imagen { get; set; } = null!;
-        public string ImagenBase64 { get; set; } = string.Empty;
-        public string ImagenMimeType { get; set; } = string.Empty;
+        public byte[]? Imagen { get; set; } = null!;
+        public string? ImagenBase64 { get; set; } = null!;
+        public string? ImagenMimeType { get; set; } = null!;
 
         public int IdOferente { get; set; }
         public UsuarioDto? Oferente { get; set; } = null!;

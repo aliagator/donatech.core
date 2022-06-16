@@ -45,7 +45,6 @@
     <None Remove="Views\Contacto\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Views\Home\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Views\Account\" />

@@ -19,10 +19,12 @@ namespace Donatech.Core.Controllers
         private readonly ILogger _logger;
         private readonly IUsuarioServiceProvider _usuarioServiceProvider;
         private readonly IMensajeServiceProvider _mensajeServiceProvider;
+        private readonly ICommonServiceProvider _commonServiceProvider;
 
         public ContactoController(ILogger<ContactoController> logger,
             IUsuarioServiceProvider usuarioServiceProvider,
-            IMensajeServiceProvider mensajeServiceProvider)
+            IMensajeServiceProvider mensajeServiceProvider,
+            ICommonServiceProvider commonServiceProvider)
         {
             _logger = logger;
             _usuarioServiceProvider = usuarioServiceProvider;
@@ -37,6 +39,14 @@ namespace Donatech.Core.Controllers
 
             try
             {
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Contacto/Mensajes",
+                    Username = JwtSessionUtils.GetCurrentUserSession(HttpContext)?.Email
+                });
+
                 var viewModel = new ContactoViewModel();
                 var contactoData = await _usuarioServiceProvider.GetUsuarioById(idUsuario);                
 
@@ -78,6 +88,14 @@ namespace Donatech.Core.Controllers
         [HttpGet]
         public async Task<ActionResult<List<MensajeDto>>> MensajesList(int idUsuario, int idProducto)
         {
+            // Guardamos el log del request
+            await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+            {
+                FchRequest = DateTime.Now,
+                Url = "/Contacto/MensajesList",
+                Username = JwtSessionUtils.GetCurrentUserSession(HttpContext)?.Email
+            });
+
             var messages = await _mensajeServiceProvider.GetListaMensajesByFilter(new FilterMensajeDto
             {
                 IdProducto = idProducto,
@@ -94,6 +112,14 @@ namespace Donatech.Core.Controllers
 
             try
             {
+                // Guardamos el log del request
+                await _commonServiceProvider.AddLogRequestAsync(new LogRequestDto
+                {
+                    FchRequest = DateTime.Now,
+                    Url = "/Contacto/InsertMessage",
+                    Username = JwtSessionUtils.GetCurrentUserSession(HttpContext)?.Email
+                });
+
                 mensaje.IdEmisor = JwtSessionUtils.GetCurrentUserSession(HttpContext)!.Id;
                 mensaje.FchEnvio = DateTime.Now;                
                 Console.WriteLine($"InsertMessage: {mensaje.Mensaje}");

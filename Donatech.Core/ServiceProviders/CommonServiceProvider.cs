@@ -2,16 +2,21 @@
 using Donatech.Core.Model;
 using Donatech.Core.Model.DbModels;
 using Donatech.Core.ServiceProviders.Interfaces;
+using Donatech.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace Donatech.Core.ServiceProviders
 {
 	public class CommonServiceProvider: ICommonServiceProvider
 	{
+		private readonly static string cPrefix = "CommonServiceProvider";
+		private readonly ILogger _logger;
 		private readonly DonatechDBContext _dbContext;
 
-		public CommonServiceProvider(DonatechDBContext dbContext)
+		public CommonServiceProvider(ILogger<CommonServiceProvider> logger,
+			DonatechDBContext dbContext)
 		{
+			_logger = logger;
 			_dbContext = dbContext;
 		}
 
@@ -60,6 +65,31 @@ namespace Donatech.Core.ServiceProviders
 				"Nuevo",
 				"Usado"
 			};
+        }
+
+		public async Task AddLogRequestAsync(LogRequestDto logRequest)
+        {
+			string mPrefix = "[AddLogRequestAsync(LogRequestDto logRequest)]";
+
+			try
+            {
+				_dbContext.LogRequests.Add(new LogRequest
+				{
+					FchRequest = logRequest.FchRequest,
+					Url = logRequest.Url,
+					Username = logRequest.Username
+				});
+
+				await _dbContext.SaveChangesAsync();
+            }
+			catch(Exception ex)
+            {
+				// En caso de obtener una excepción inesperada, guardamos el valor en el logger
+				_logger.AddCustomLog(cPrefix,
+						mPrefix,
+						"Ha ocurrido un error inesperado",
+						ex);
+			}
         }
 	}
 }
