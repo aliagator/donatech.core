@@ -51,7 +51,8 @@ namespace Donatech.Core.ServiceProviders
             {
                 var usuarioDb = await _dbContext.Usuarios.FirstOrDefaultAsync(u =>
                     u.Email.ToLower().Equals(usuario.Email.ToLower()) &&
-                    u.Password.Equals(usuario.Password));
+                    u.Password.Equals(usuario.Password) &&
+                    u.Validated == true);
 
                 if(usuarioDb == null)
                 {
@@ -70,7 +71,9 @@ namespace Donatech.Core.ServiceProviders
                     IdRol = usuarioDb.IdRol,
                     Nombre = usuarioDb.Nombre,
                     Password = usuarioDb.Password,
-                    Run = usuarioDb.Run
+                    Run = usuarioDb.Run,
+                    Validated = usuarioDb.Validated,
+                    AccountToken = usuarioDb.AccountToken
                 });
             }
             catch(Exception ex)
@@ -104,7 +107,9 @@ namespace Donatech.Core.ServiceProviders
                     IdRol = usuarioDb.IdRol,
                     Nombre = usuarioDb.Nombre,
                     Password = usuarioDb.Password,
-                    Run = usuarioDb.Run
+                    Run = usuarioDb.Run,
+                    Validated = usuarioDb.Validated,
+                    AccountToken = usuarioDb.AccountToken
                 });
             }
             catch (Exception ex)
@@ -135,7 +140,9 @@ namespace Donatech.Core.ServiceProviders
                            IdComuna = u.IdComuna,
                            Nombre = u.Nombre,
                            IdRol = u.IdRol,
-                           Run = u.Run
+                           Run = u.Run,
+                           Validated = u.Validated,
+                           AccountToken = u.AccountToken
                        }).FirstOrDefaultAsync();                
 
                 return new ResultDto<UsuarioDto>(infoDonante);
