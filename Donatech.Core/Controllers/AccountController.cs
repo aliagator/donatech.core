@@ -216,6 +216,37 @@ namespace Donatech.Core.Controllers
             return View();
         }
 
+        //[AllowAnonymous]
+        //[HttpGet]
+        //public async Task<IActionResult> TestEmail(string email)
+        //{
+        //    try
+        //    {
+        //        string htmlPath = Path.Combine(_hostingEnvironment.WebRootPath, "pages", "Activation.html");
+        //        // Obtenemos el html con el template de activacion de cuenta
+        //        var htmlActivate = System.IO.File.ReadAllText(htmlPath);
+        //        // Obtenemos la url con el metodo para la validacion de token de activacion de cuenta
+        //        var activateUrl = _configuration.GetValue<string>("AccountSettings:AccountActivateLink");
+        //        // Reemplazamos el token de la url con el generado al registrar el nuevo usuario
+        //        activateUrl = activateUrl?.Replace("[TOKEN]", "TokenTest");
+        //        // Reemplazamos el link final en el template html
+        //        htmlActivate = htmlActivate?.Replace("[ACCOUNT_TOKEN_LINK]", activateUrl);
+        //        // Enviamos el email de validacion de cuenta
+        //        await _mailServiceProvider.SendEmailAsync(new MailRequestDto
+        //        {
+        //            Body = htmlActivate,
+        //            Subject = "Donatech - Activacion Cuenta",
+        //            ToEmail = email
+        //        });
+
+        //        return Json("Email Sent");
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        return Json(ex);
+        //    }
+        //}
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel viewModel)
